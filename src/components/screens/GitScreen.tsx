@@ -101,27 +101,39 @@ export function GitScreen() {
                 <span className="px-1.5 py-0.5 bg-muted rounded text-[11px]">{stagedFiles.length}</span>
               </span>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {stagedFiles.map((file) => (
-                <button
+                <div
                   key={file.path}
-                  onClick={() => {
-                    setSelectedFile(file.path);
-                    toggleStage(file.path);
-                  }}
                   className={cn(
-                    "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
+                    "group flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
                     "bg-card/50 hover:bg-card/80",
                     selectedFile === file.path && "bg-accent/15 border border-accent/30"
                   )}
                 >
-                  <span className={cn("w-2 h-2 rounded-sm", getStatusColor(file.status))} />
-                  <span className="flex-1 font-mono text-xs truncate text-left">{file.path}</span>
-                  <span className="text-[11px] text-muted-foreground font-mono">
+                  <span className={cn("w-2 h-2 rounded-sm shrink-0", getStatusColor(file.status))} />
+                  <button 
+                    onClick={() => setSelectedFile(file.path)}
+                    className="flex-1 font-mono text-xs truncate text-left hover:text-accent transition-colors"
+                  >
+                    {file.path}
+                  </button>
+                  <span className="text-[11px] text-muted-foreground font-mono shrink-0">
                     {file.linesAdded && <span className="text-success">+{file.linesAdded}</span>}
                     {file.linesRemoved && <span className="text-destructive ml-1">-{file.linesRemoved}</span>}
                   </span>
-                </button>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Commit">
+                      📝
+                    </button>
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Commit & Push">
+                      🚀
+                    </button>
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Create PR">
+                      🔃
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -134,27 +146,39 @@ export function GitScreen() {
                 <span className="px-1.5 py-0.5 bg-muted rounded text-[11px]">{unstagedFiles.length}</span>
               </span>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {unstagedFiles.map((file) => (
-                <button
+                <div
                   key={file.path}
-                  onClick={() => {
-                    setSelectedFile(file.path);
-                    toggleStage(file.path);
-                  }}
                   className={cn(
-                    "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
+                    "group flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
                     "bg-card/50 hover:bg-card/80",
                     selectedFile === file.path && "bg-accent/15 border border-accent/30"
                   )}
                 >
-                  <span className={cn("w-2 h-2 rounded-sm", getStatusColor(file.status))} />
-                  <span className="flex-1 font-mono text-xs truncate text-left">{file.path}</span>
-                  <span className="text-[11px] text-muted-foreground font-mono">
+                  <span className={cn("w-2 h-2 rounded-sm shrink-0", getStatusColor(file.status))} />
+                  <button 
+                    onClick={() => setSelectedFile(file.path)}
+                    className="flex-1 font-mono text-xs truncate text-left hover:text-accent transition-colors"
+                  >
+                    {file.path}
+                  </button>
+                  <span className="text-[11px] text-muted-foreground font-mono shrink-0">
                     {file.linesAdded && <span className="text-success">+{file.linesAdded}</span>}
                     {file.linesRemoved && <span className="text-destructive ml-1">-{file.linesRemoved}</span>}
                   </span>
-                </button>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Commit">
+                      📝
+                    </button>
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Commit & Push">
+                      🚀
+                    </button>
+                    <button className="p-1.5 rounded hover:bg-accent/20 text-muted-foreground hover:text-foreground transition-colors" title="Create PR">
+                      🔃
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
