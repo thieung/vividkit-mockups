@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Diamond, ChevronRight, ChevronLeft, Check, Code2, Lightbulb, ClipboardList, HelpCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Code2, Lightbulb, ClipboardList, HelpCircle } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
+import logoImage from '@/assets/logo.png';
 
 type Step = 1 | 2 | 3;
 
@@ -42,7 +43,7 @@ export function WizardScreen() {
     <div className="h-full flex flex-col items-center justify-center animate-fade-in">
       {/* Logo */}
       <div className="flex items-center gap-2 mb-4">
-        <Diamond className="w-8 h-8 text-primary" />
+        <img src={logoImage} alt="VividKit" className="w-10 h-10 rounded-lg" />
         <span className="text-2xl font-semibold gradient-text">VividKit</span>
       </div>
       
