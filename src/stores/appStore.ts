@@ -4,11 +4,11 @@ export type TabId = 'dashboard' | 'wizard' | 'chat' | 'brainstorm' | 'plans' | '
 
 export type UserMode = 'simple' | 'advanced';
 
-// Tabs visible in Simple mode (non-tech users)
-export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'chat', 'plans', 'settings'];
+// Tabs visible in Simple mode (non-tech users) - AI Interview is the main entry point
+export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'plans', 'settings'];
 
-// All tabs visible in Advanced mode (developers)
-export const ADVANCED_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'chat', 'brainstorm', 'plans', 'sessions', 'files', 'git', 'usage', 'settings'];
+// All tabs visible in Advanced mode (developers) - Direct Chat without interview
+export const ADVANCED_MODE_TABS: TabId[] = ['dashboard', 'chat', 'brainstorm', 'plans', 'sessions', 'files', 'git', 'usage', 'settings'];
 
 export interface Project {
   id: string;
