@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Plus, Check, Save, X, Sun, Moon, Monitor, Key, Eye, EyeOff, Trash2, Copy, RefreshCw } from 'lucide-react';
+import { Plus, Check, Save, X, Sun, Moon, Monitor, Key, Eye, EyeOff, Trash2, Copy, RefreshCw, Sparkles, Code2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
+import { useAppStore, UserMode } from '@/stores/appStore';
 
-type Tab = 'general' | 'providers' | 'routing' | 'api-keys' | 'appearance';
+type Tab = 'general' | 'providers' | 'routing' | 'api-keys' | 'appearance' | 'mode';
 
 interface Provider {
   id: string;
@@ -53,7 +54,8 @@ const initialApiKeys: ApiKey[] = [
 ];
 
 export function SettingsScreen() {
-  const [activeTab, setActiveTab] = useState<Tab>('general');
+  const { userMode, setUserMode } = useAppStore();
+  const [activeTab, setActiveTab] = useState<Tab>('mode');
   const [autoSwitch, setAutoSwitch] = useState(true);
   const [costWarn, setCostWarn] = useState(true);
   const [hardLimit, setHardLimit] = useState(false);
@@ -492,8 +494,119 @@ export function SettingsScreen() {
     </div>
   );
   
+  const renderModeTab = () => {
+    const modes: { id: UserMode; label: string; description: string; icon: React.ElementType; features: string[] }[] = [
+      { 
+        id: 'simple', 
+        label: 'Simple Mode', 
+        description: 'Dành cho người mới bắt đầu - AI sẽ hướng dẫn từng bước',
+        icon: Sparkles,
+        features: [
+          'Giao diện đơn giản, dễ sử dụng',
+          'AI hỏi clarifying questions trước khi build',
+          'Hiển thị concept preview trước khi code',
+          'Hướng dẫn "Next Steps" rõ ràng'
+        ]
+      },
+      { 
+        id: 'advanced', 
+        label: 'Advanced Mode', 
+        description: 'Dành cho developer - Truy cập đầy đủ công cụ',
+        icon: Code2,
+        features: [
+          'Tất cả tabs: Files, Git, Sessions...',
+          'Full control over code và settings',
+          'Debug tools và terminal access',
+          'Custom AI routing và providers'
+        ]
+      },
+    ];
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-sm font-semibold mb-2 flex items-center gap-2">
+            🎯 Chọn chế độ sử dụng
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Chọn mode phù hợp với kinh nghiệm của bạn. Bạn có thể thay đổi bất cứ lúc nào.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          {modes.map((mode) => {
+            const Icon = mode.icon;
+            const isSelected = userMode === mode.id;
+            
+            return (
+              <button
+                key={mode.id}
+                onClick={() => {
+                  setUserMode(mode.id);
+                  toast({ 
+                    title: `Switched to ${mode.label}`,
+                    description: mode.description
+                  });
+                }}
+                className={cn(
+                  "glass-card p-6 text-left transition-all hover:scale-[1.02]",
+                  isSelected && "border-primary bg-primary/10 ring-2 ring-primary/20"
+                )}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-lg flex items-center justify-center",
+                    isSelected ? "bg-primary text-primary-foreground" : "bg-secondary"
+                  )}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{mode.label}</h3>
+                    <p className="text-xs text-muted-foreground">{mode.description}</p>
+                  </div>
+                  {isSelected && (
+                    <Check className="w-5 h-5 text-primary ml-auto" />
+                  )}
+                </div>
+                
+                <ul className="space-y-2 mt-4">
+                  {mode.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </button>
+            );
+          })}
+        </div>
+        
+        <hr className="border-border" />
+        
+        <div className="glass-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              💡
+            </div>
+            <div>
+              <h4 className="text-sm font-medium">Tip</h4>
+              <p className="text-xs text-muted-foreground">
+                {userMode === 'simple' 
+                  ? 'Simple Mode ẩn các công cụ phức tạp và cung cấp hướng dẫn chi tiết hơn từ AI.'
+                  : 'Advanced Mode cho phép truy cập tất cả công cụ và tùy chỉnh chi tiết.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'mode':
+        return renderModeTab();
       case 'general':
         return renderGeneralTab();
       case 'providers':
@@ -514,6 +627,7 @@ export function SettingsScreen() {
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-border pb-2">
         {[
+          { id: 'mode' as Tab, label: '🎯 Mode' },
           { id: 'general' as Tab, label: 'General' },
           { id: 'providers' as Tab, label: 'Providers' },
           { id: 'routing' as Tab, label: 'Routing' },
