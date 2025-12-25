@@ -56,6 +56,12 @@ interface AppState {
   closeCommandPalette: () => void;
   toggleCommandPalette: () => void;
   
+  // Keyboard Shortcuts Modal
+  isShortcutsModalOpen: boolean;
+  openShortcutsModal: () => void;
+  closeShortcutsModal: () => void;
+  toggleShortcutsModal: () => void;
+  
   // Projects
   projects: Project[];
   activeProject: string | null;
@@ -93,6 +99,12 @@ export const useAppStore = create<AppState>((set) => ({
   openCommandPalette: () => set({ isCommandPaletteOpen: true }),
   closeCommandPalette: () => set({ isCommandPaletteOpen: false }),
   toggleCommandPalette: () => set((state) => ({ isCommandPaletteOpen: !state.isCommandPaletteOpen })),
+  
+  // Keyboard Shortcuts Modal
+  isShortcutsModalOpen: false,
+  openShortcutsModal: () => set({ isShortcutsModalOpen: true }),
+  closeShortcutsModal: () => set({ isShortcutsModalOpen: false }),
+  toggleShortcutsModal: () => set((state) => ({ isShortcutsModalOpen: !state.isShortcutsModalOpen })),
   
   // Projects
   projects: [

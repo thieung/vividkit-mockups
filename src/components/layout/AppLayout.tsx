@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar';
 import { TabNavigation } from './TabNavigation';
 import { CommandPalette } from '@/components/features/CommandPalette';
 import { NewProjectModal } from '@/components/features/NewProjectModal';
+import { KeyboardShortcutsModal } from '@/components/features/KeyboardShortcutsModal';
 import { useAppStore } from '@/stores/appStore';
 
 interface AppLayoutProps {
@@ -11,20 +12,32 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { toggleCommandPalette } = useAppStore();
+  const { 
+    toggleCommandPalette, 
+    isShortcutsModalOpen, 
+    openShortcutsModal, 
+    closeShortcutsModal 
+  } = useAppStore();
   
-  // Keyboard shortcut for command palette
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Command palette: Cmd/Ctrl + K
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         toggleCommandPalette();
+      }
+      
+      // Shortcuts modal: ? key (when not in input)
+      if (e.key === '?' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
+        e.preventDefault();
+        openShortcutsModal();
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleCommandPalette]);
+  }, [toggleCommandPalette, openShortcutsModal]);
   
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -44,6 +57,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       
       <CommandPalette />
       <NewProjectModal />
+      <KeyboardShortcutsModal open={isShortcutsModalOpen} onOpenChange={closeShortcutsModal} />
     </div>
   );
 }
