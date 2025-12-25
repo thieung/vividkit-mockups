@@ -14,6 +14,7 @@ import { GitScreen } from '@/components/screens/GitScreen';
 import { UsageScreen } from '@/components/screens/UsageScreen';
 import { WizardScreen } from '@/components/screens/WizardScreen';
 import { AIInterviewScreen } from '@/components/screens/AIInterviewScreen';
+import { ConceptPreviewScreen } from '@/components/screens/ConceptPreviewScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
@@ -28,6 +29,7 @@ const Index = () => {
     switch (activeTab) {
       case 'dashboard': return userMode === 'simple' ? <SimpleDashboard /> : <DashboardScreen />;
       case 'wizard': return userMode === 'simple' ? <AIInterviewScreen /> : <WizardScreen />;
+      case 'concept': return <ConceptPreviewScreen />;
       case 'chat': return <ChatScreen />;
       case 'brainstorm': return <BrainstormScreen />;
       case 'plans': return <PlansScreen />;

@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 
-export type TabId = 'dashboard' | 'wizard' | 'chat' | 'brainstorm' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
+export type TabId = 'dashboard' | 'wizard' | 'concept' | 'chat' | 'brainstorm' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
+
+export interface InterviewAnswer {
+  questionId: string;
+  text: string;
+  selectedOptions: string[];
+}
 
 export type UserMode = 'simple' | 'advanced';
 
@@ -118,6 +124,10 @@ interface AppState {
   setSelectedBrainstorm: (id: string | null) => void;
   updateBrainstormReport: (id: string, updates: Partial<BrainstormReport>) => void;
   deleteBrainstormReport: (id: string) => void;
+  
+  // Interview
+  interviewAnswers: InterviewAnswer[] | null;
+  setInterviewAnswers: (answers: InterviewAnswer[]) => void;
   
   // Modals
   isNewProjectOpen: boolean;
@@ -267,6 +277,10 @@ export const useAppStore = create<AppState>((set) => ({
     brainstormReports: state.brainstormReports.filter(r => r.id !== id),
     selectedBrainstorm: state.selectedBrainstorm === id ? null : state.selectedBrainstorm,
   })),
+  
+  // Interview
+  interviewAnswers: null,
+  setInterviewAnswers: (answers) => set({ interviewAnswers: answers }),
   
   // Modals
   isNewProjectOpen: false,

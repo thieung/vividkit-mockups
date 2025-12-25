@@ -56,7 +56,7 @@ interface Answer {
 }
 
 export function AIInterviewScreen() {
-  const { setActiveTab, addMessage, userMode } = useAppStore();
+  const { setActiveTab, setInterviewAnswers, userMode } = useAppStore();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>(
     interviewQuestions.map(q => ({ questionId: q.id, text: '', selectedOptions: [] }))
@@ -108,33 +108,13 @@ export function AIInterviewScreen() {
   const handleStartBuilding = async () => {
     setIsProcessing(true);
     
-    // Build context from answers
-    const context = answers.map((a, i) => {
-      const q = interviewQuestions[i];
-      const response = [a.text, ...a.selectedOptions].filter(Boolean).join(', ');
-      return `**${q.question}**\n${response}`;
-    }).join('\n\n');
+    // Save answers to store
+    setInterviewAnswers(answers);
 
-    // Add to chat as user message
-    addMessage({
-      role: 'user',
-      content: `Tôi muốn xây dựng một sản phẩm với các thông tin sau:\n\n${context}`,
-    });
-
-    // Simulate AI processing
+    // Navigate to concept preview
     setTimeout(() => {
-      addMessage({
-        role: 'assistant',
-        content: `Tuyệt vời! Tôi đã hiểu ý tưởng của bạn. Dựa trên thông tin bạn cung cấp, tôi sẽ giúp bạn:\n\n1. **Phân tích yêu cầu** - Xác định các tính năng cần thiết\n2. **Tạo wireframe** - Phác thảo giao diện cơ bản\n3. **Bắt đầu code** - Xây dựng từng phần theo thứ tự ưu tiên\n\nBạn sẵn sàng bắt đầu chưa? Tôi sẽ hỏi thêm một vài câu hỏi chi tiết trong quá trình build.`,
-        provider: 'AI Assistant',
-        toolCalls: [
-          { name: 'Analyze Requirements', status: 'done' },
-          { name: 'Generate Plan', status: 'done' },
-        ],
-      });
-      
-      setActiveTab('chat');
-    }, 1500);
+      setActiveTab('concept');
+    }, 1000);
   };
 
   const renderSummary = () => (
