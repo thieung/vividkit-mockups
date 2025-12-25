@@ -2,6 +2,14 @@ import { create } from 'zustand';
 
 export type TabId = 'dashboard' | 'wizard' | 'chat' | 'brainstorm' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
 
+export type UserMode = 'simple' | 'advanced';
+
+// Tabs visible in Simple mode (non-tech users)
+export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'chat', 'plans', 'settings'];
+
+// All tabs visible in Advanced mode (developers)
+export const ADVANCED_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'chat', 'brainstorm', 'plans', 'sessions', 'files', 'git', 'usage', 'settings'];
+
 export interface Project {
   id: string;
   name: string;
@@ -62,6 +70,10 @@ export interface BrainstormReport {
 }
 
 interface AppState {
+  // User Mode
+  userMode: UserMode;
+  setUserMode: (mode: UserMode) => void;
+  
   // Navigation
   activeTab: TabId;
   setActiveTab: (tab: TabId) => void;
@@ -113,6 +125,10 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  // User Mode
+  userMode: 'simple',
+  setUserMode: (mode) => set({ userMode: mode }),
+  
   // Navigation
   activeTab: 'dashboard',
   setActiveTab: (tab) => set({ activeTab: tab, selectedPlan: null }),

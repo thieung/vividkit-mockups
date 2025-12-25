@@ -1,13 +1,13 @@
 import { LayoutDashboard, Wand2, MessageSquare, Lightbulb, ClipboardList, Layers, Settings, FolderOpen, GitBranch, BarChart3 } from 'lucide-react';
-import { useAppStore, TabId } from '@/stores/appStore';
+import { useAppStore, TabId, SIMPLE_MODE_TABS, ADVANCED_MODE_TABS } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 
-const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+const allTabs: { id: TabId; label: string; simpleLabel?: string; icon: React.ElementType }[] = [
+  { id: 'dashboard', label: 'Dashboard', simpleLabel: 'Home', icon: LayoutDashboard },
   { id: 'wizard', label: 'Wizard', icon: Wand2 },
-  { id: 'chat', label: 'Chat', icon: MessageSquare },
+  { id: 'chat', label: 'Chat', simpleLabel: 'Build with AI', icon: MessageSquare },
   { id: 'brainstorm', label: 'Brainstorm', icon: Lightbulb },
-  { id: 'plans', label: 'Plans', icon: ClipboardList },
+  { id: 'plans', label: 'Plans', simpleLabel: 'My Project', icon: ClipboardList },
   { id: 'sessions', label: 'Sessions', icon: Layers },
   { id: 'files', label: 'Files', icon: FolderOpen },
   { id: 'git', label: 'Git', icon: GitBranch },
@@ -16,13 +16,17 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
 ];
 
 export function TabNavigation() {
-  const { activeTab, setActiveTab } = useAppStore();
+  const { activeTab, setActiveTab, userMode } = useAppStore();
+  
+  const visibleTabIds = userMode === 'simple' ? SIMPLE_MODE_TABS : ADVANCED_MODE_TABS;
+  const visibleTabs = allTabs.filter(tab => visibleTabIds.includes(tab.id));
   
   return (
     <div className="h-11 bg-card/50 border-b border-border flex items-center px-4 gap-1">
-      {tabs.map((tab) => {
+      {visibleTabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
+        const label = userMode === 'simple' && tab.simpleLabel ? tab.simpleLabel : tab.label;
         
         return (
           <button
@@ -36,7 +40,7 @@ export function TabNavigation() {
             )}
           >
             <Icon className="w-4 h-4" />
-            {tab.label}
+            {label}
           </button>
         );
       })}
