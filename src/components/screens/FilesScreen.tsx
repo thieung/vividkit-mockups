@@ -1,6 +1,15 @@
 import { useState } from 'react';
-import { Folder, File, Search, Plus, FolderOpen, Copy, Grid3X3, List, ChevronRight } from 'lucide-react';
+import { Folder, File, Search, Plus, FolderOpen, Copy, Grid3X3, List, ChevronRight, ExternalLink, Code2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
 
 interface FileItem {
   name: string;
@@ -14,6 +23,24 @@ interface FolderItem {
   children?: FolderItem[];
   expanded?: boolean;
 }
+
+interface IDEOption {
+  id: string;
+  name: string;
+  icon: string;
+  protocol: string;
+}
+
+const ideOptions: IDEOption[] = [
+  { id: 'vscode', name: 'Visual Studio Code', icon: '💻', protocol: 'vscode://file' },
+  { id: 'vscode-insiders', name: 'VS Code Insiders', icon: '💚', protocol: 'vscode-insiders://file' },
+  { id: 'cursor', name: 'Cursor', icon: '🔮', protocol: 'cursor://file' },
+  { id: 'zed', name: 'Zed', icon: '⚡', protocol: 'zed://file' },
+  { id: 'sublime', name: 'Sublime Text', icon: '🔶', protocol: 'subl://open?url=file://' },
+  { id: 'atom', name: 'Atom', icon: '⚛️', protocol: 'atom://open?url=file://' },
+  { id: 'webstorm', name: 'WebStorm', icon: '🌐', protocol: 'webstorm://open?file=' },
+  { id: 'idea', name: 'IntelliJ IDEA', icon: '🧠', protocol: 'idea://open?file=' },
+];
 
 const folderTree: FolderItem[] = [
   { 
@@ -48,6 +75,41 @@ const files: FileItem[] = [
 export function FilesScreen() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [preferredIDE, setPreferredIDE] = useState<string>('vscode');
+  
+  const currentPath = '/Users/project/src/components/auth';
+  
+  const openInIDE = (fileName: string, ideId?: string) => {
+    const ide = ideOptions.find(i => i.id === (ideId || preferredIDE)) || ideOptions[0];
+    const filePath = `${currentPath}/${fileName}`;
+    
+    // Create the protocol URL based on IDE
+    let url: string;
+    if (ide.id === 'sublime' || ide.id === 'atom') {
+      url = `${ide.protocol}${filePath}`;
+    } else if (ide.id === 'webstorm' || ide.id === 'idea') {
+      url = `${ide.protocol}${filePath}`;
+    } else {
+      url = `${ide.protocol}${filePath}`;
+    }
+    
+    // Attempt to open the IDE
+    window.open(url, '_self');
+    
+    toast({
+      title: `Opening in ${ide.name}`,
+      description: fileName,
+    });
+  };
+  
+  const handleSetDefaultIDE = (ideId: string) => {
+    setPreferredIDE(ideId);
+    const ide = ideOptions.find(i => i.id === ideId);
+    toast({
+      title: 'Default IDE Updated',
+      description: `${ide?.name} is now your default editor`,
+    });
+  };
   
   const renderFolder = (folder: FolderItem, depth: number = 0) => (
     <div key={folder.name} style={{ paddingLeft: `${depth * 12}px` }}>
@@ -154,10 +216,60 @@ export function FilesScreen() {
               <Plus className="w-4 h-4" />
               New
             </button>
-            <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80 transition-colors flex items-center gap-2">
-              <FolderOpen className="w-4 h-4" />
-              Open
-            </button>
+            
+            {/* Open in IDE Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+                  disabled={!selectedFile || files.find(f => f.name === selectedFile)?.type === 'folder'}
+                >
+                  <Code2 className="w-4 h-4" />
+                  Open in IDE
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Quick Open</DropdownMenuLabel>
+                {selectedFile && (
+                  <DropdownMenuItem onClick={() => openInIDE(selectedFile)}>
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Open in {ideOptions.find(i => i.id === preferredIDE)?.name}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Choose IDE</DropdownMenuLabel>
+                {ideOptions.map(ide => (
+                  <DropdownMenuItem 
+                    key={ide.id} 
+                    onClick={() => selectedFile && openInIDE(selectedFile, ide.id)}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{ide.icon}</span>
+                      {ide.name}
+                    </span>
+                    {preferredIDE === ide.id && (
+                      <span className="text-xs text-primary">Default</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Set Default IDE</DropdownMenuLabel>
+                {ideOptions.slice(0, 4).map(ide => (
+                  <DropdownMenuItem 
+                    key={`default-${ide.id}`} 
+                    onClick={() => handleSetDefaultIDE(ide.id)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{ide.icon}</span>
+                      Set {ide.name} as default
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80 transition-colors flex items-center gap-2">
               <Copy className="w-4 h-4" />
               Copy Path
