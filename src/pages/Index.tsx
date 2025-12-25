@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAppStore } from '@/stores/appStore';
 import { DashboardScreen } from '@/components/screens/DashboardScreen';
+import { SimpleDashboard } from '@/components/screens/SimpleDashboard';
 import { ChatScreen } from '@/components/screens/ChatScreen';
 import { BrainstormScreen } from '@/components/screens/BrainstormScreen';
 import { PlansScreen } from '@/components/screens/PlansScreen';
@@ -25,7 +26,7 @@ const Index = () => {
     }
     
     switch (activeTab) {
-      case 'dashboard': return <DashboardScreen />;
+      case 'dashboard': return userMode === 'simple' ? <SimpleDashboard /> : <DashboardScreen />;
       case 'wizard': return userMode === 'simple' ? <AIInterviewScreen /> : <WizardScreen />;
       case 'chat': return <ChatScreen />;
       case 'brainstorm': return <BrainstormScreen />;
