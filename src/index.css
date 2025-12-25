@@ -6,153 +6,151 @@
 
 @layer base {
   :root {
-    /* Light Mode - Emerald & Silver Premium */
-    --background: 180 8% 97%;
-    --foreground: 200 18% 12%;
+    /* Light Mode Theme */
+    --background: 210 20% 98%;
+    --foreground: 220 16% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 200 18% 12%;
+    --card-foreground: 220 16% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 200 18% 12%;
+    --popover-foreground: 220 16% 12%;
 
-    --primary: 160 84% 39%;
+    --primary: 187 85% 43%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 12% 91%;
-    --secondary-foreground: 200 15% 22%;
+    --secondary: 210 20% 93%;
+    --secondary-foreground: 220 16% 20%;
 
-    --muted: 200 10% 89%;
-    --muted-foreground: 200 10% 45%;
+    --muted: 210 15% 90%;
+    --muted-foreground: 215 15% 45%;
 
-    --accent: 220 15% 50%;
+    --accent: 267 75% 58%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 200 12% 86%;
-    --input: 200 12% 91%;
-    --ring: 160 84% 39%;
+    --border: 214 20% 88%;
+    --input: 214 20% 92%;
+    --ring: 187 85% 43%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    /* Provider colors - Emerald palette */
-    --claude: 24 90% 52%;
-    --antigravity: 160 85% 42%;
-    --gemini: 270 65% 55%;
-    --copilot: 210 85% 52%;
-    --glm: 350 80% 52%;
-    --openrouter: 180 70% 40%;
+    /* Provider colors */
+    --claude: 270 80% 55%;
+    --antigravity: 210 90% 50%;
+    --gemini: 280 60% 55%;
+    --copilot: 24 90% 45%;
+    --glm: 0 70% 50%;
+    --openrouter: 160 80% 38%;
 
     /* Priority colors */
-    --priority-high: 0 72% 50%;
-    --priority-medium: 45 90% 48%;
-    --priority-low: 160 70% 40%;
+    --priority-high: 0 70% 50%;
+    --priority-medium: 40 90% 45%;
+    --priority-low: 140 60% 38%;
 
     /* Status colors */
-    --status-online: 160 75% 40%;
-    --status-offline: 0 65% 48%;
-    --status-degraded: 45 90% 48%;
+    --status-online: 140 60% 38%;
+    --status-offline: 0 60% 45%;
+    --status-degraded: 40 90% 45%;
 
     /* Glassmorphism */
-    --glass-bg: 0 0% 100% / 0.88;
-    --glass-border: 200 12% 82% / 0.5;
-    --glass-blur: 16px;
+    --glass-bg: 0 0% 100% / 0.9;
+    --glass-border: 214 20% 85% / 0.6;
+    --glass-blur: 12px;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(170 75% 35%));
-    --gradient-accent: linear-gradient(135deg, hsl(220 15% 50%), hsl(210 18% 58%));
-    --gradient-success: linear-gradient(135deg, hsl(160 70% 40%), hsl(175 65% 42%));
+    --gradient-primary: linear-gradient(135deg, hsl(187 85% 43%), hsl(267 75% 58%));
+    --gradient-claude: linear-gradient(135deg, hsl(270 80% 55%), hsl(290 70% 50%));
+    --gradient-success: linear-gradient(135deg, hsl(140 60% 38%), hsl(160 60% 42%));
 
     /* Shadows */
-    --shadow-glow: 0 0 40px hsl(160 84% 39% / 0.12);
-    --shadow-card: 0 4px 24px hsl(200 18% 12% / 0.06);
-    --shadow-elevated: 0 8px 32px hsl(200 18% 12% / 0.1);
+    --shadow-glow: 0 0 40px hsl(187 85% 43% / 0.1);
+    --shadow-card: 0 4px 24px hsl(220 16% 12% / 0.08);
 
     /* Sidebar */
-    --sidebar-background: 180 8% 95%;
-    --sidebar-foreground: 200 15% 32%;
-    --sidebar-primary: 160 84% 39%;
+    --sidebar-background: 210 15% 96%;
+    --sidebar-foreground: 220 16% 30%;
+    --sidebar-primary: 187 85% 43%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 200 10% 90%;
-    --sidebar-accent-foreground: 200 15% 18%;
-    --sidebar-border: 200 12% 88%;
-    --sidebar-ring: 160 84% 39%;
+    --sidebar-accent: 210 15% 92%;
+    --sidebar-accent-foreground: 220 16% 15%;
+    --sidebar-border: 214 20% 90%;
+    --sidebar-ring: 187 85% 43%;
   }
 
   .dark {
-    /* Dark Mode - Emerald & Silver Premium */
-    --background: 200 20% 7%;
-    --foreground: 180 10% 94%;
+    /* Dark IDE Theme */
+    --background: 220 16% 8%;
+    --foreground: 210 20% 95%;
 
-    --card: 200 18% 10%;
-    --card-foreground: 180 10% 94%;
+    --card: 220 16% 11%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 200 18% 9%;
-    --popover-foreground: 180 10% 94%;
+    --popover: 220 16% 10%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 160 80% 45%;
-    --primary-foreground: 200 20% 7%;
+    --primary: 187 92% 55%;
+    --primary-foreground: 220 16% 8%;
 
-    --secondary: 200 15% 14%;
-    --secondary-foreground: 180 8% 85%;
+    --secondary: 220 16% 16%;
+    --secondary-foreground: 210 20% 90%;
 
-    --muted: 200 14% 16%;
-    --muted-foreground: 200 10% 52%;
+    --muted: 220 16% 18%;
+    --muted-foreground: 215 15% 55%;
 
-    --accent: 220 12% 62%;
-    --accent-foreground: 200 20% 10%;
+    --accent: 267 84% 68%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 180 10% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 200 14% 16%;
-    --input: 200 14% 14%;
-    --ring: 160 80% 45%;
+    --border: 220 16% 18%;
+    --input: 220 16% 16%;
+    --ring: 187 92% 55%;
 
-    /* Provider colors - Emerald palette */
-    --claude: 24 95% 58%;
-    --antigravity: 160 90% 50%;
-    --gemini: 270 70% 65%;
-    --copilot: 210 90% 58%;
-    --glm: 350 85% 58%;
-    --openrouter: 180 75% 48%;
+    /* Provider colors */
+    --claude: 270 100% 70%;
+    --antigravity: 210 100% 60%;
+    --gemini: 280 60% 65%;
+    --copilot: 24 100% 50%;
+    --glm: 0 80% 55%;
+    --openrouter: 160 100% 45%;
 
     /* Priority colors */
-    --priority-high: 0 78% 55%;
-    --priority-medium: 45 95% 55%;
-    --priority-low: 160 75% 48%;
+    --priority-high: 0 80% 55%;
+    --priority-medium: 45 100% 55%;
+    --priority-low: 140 70% 45%;
 
     /* Status colors */
-    --status-online: 160 78% 48%;
-    --status-offline: 0 70% 52%;
-    --status-degraded: 45 95% 55%;
+    --status-online: 140 70% 45%;
+    --status-offline: 0 70% 50%;
+    --status-degraded: 45 100% 55%;
 
     /* Glassmorphism */
-    --glass-bg: 200 18% 10% / 0.88;
-    --glass-border: 200 14% 22% / 0.5;
-    --glass-blur: 16px;
+    --glass-bg: 220 16% 12% / 0.8;
+    --glass-border: 220 16% 25% / 0.5;
+    --glass-blur: 12px;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(160 80% 45%), hsl(170 72% 40%));
-    --gradient-accent: linear-gradient(135deg, hsl(220 12% 62%), hsl(210 15% 70%));
-    --gradient-success: linear-gradient(135deg, hsl(160 75% 48%), hsl(175 70% 50%));
+    --gradient-primary: linear-gradient(135deg, hsl(187 92% 55%), hsl(267 84% 68%));
+    --gradient-claude: linear-gradient(135deg, hsl(270 100% 70%), hsl(290 80% 60%));
+    --gradient-success: linear-gradient(135deg, hsl(140 70% 45%), hsl(160 70% 50%));
 
     /* Shadows */
-    --shadow-glow: 0 0 50px hsl(160 80% 45% / 0.18);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.35);
-    --shadow-elevated: 0 12px 40px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(187 92% 55% / 0.15);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.3);
 
     /* Sidebar */
-    --sidebar-background: 200 20% 5%;
-    --sidebar-foreground: 180 8% 75%;
-    --sidebar-primary: 160 80% 45%;
-    --sidebar-primary-foreground: 200 20% 7%;
-    --sidebar-accent: 200 15% 12%;
-    --sidebar-accent-foreground: 180 10% 94%;
-    --sidebar-border: 200 14% 12%;
-    --sidebar-ring: 160 80% 45%;
+    --sidebar-background: 220 16% 6%;
+    --sidebar-foreground: 210 20% 80%;
+    --sidebar-primary: 187 92% 55%;
+    --sidebar-primary-foreground: 220 16% 8%;
+    --sidebar-accent: 220 16% 14%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 220 16% 14%;
+    --sidebar-ring: 187 92% 55%;
   }
 }
 
@@ -312,10 +310,10 @@
   /* Pulse glow */
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(160 80% 45% / 0.2);
+      box-shadow: 0 0 20px hsl(187 92% 55% / 0.2);
     }
     50% {
-      box-shadow: 0 0 40px hsl(160 80% 45% / 0.4);
+      box-shadow: 0 0 40px hsl(187 92% 55% / 0.4);
     }
   }
 
