@@ -1,6 +1,7 @@
 import { Diamond, FolderOpen, Plus, Settings, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Sidebar() {
   const { projects, activeProject, setActiveProject, setActiveTab, setNewProjectOpen } = useAppStore();
@@ -9,9 +10,12 @@ export function Sidebar() {
     <div className="w-56 bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Logo */}
       <div className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <Diamond className="w-5 h-5 text-primary" />
-          <span className="font-semibold text-foreground">VividKit</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Diamond className="w-5 h-5 text-primary" />
+            <span className="font-semibold text-foreground">VividKit</span>
+          </div>
+          <ThemeToggle />
         </div>
       </div>
       
