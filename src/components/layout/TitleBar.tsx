@@ -1,4 +1,4 @@
-import { Diamond } from 'lucide-react';
+import logoImage from '@/assets/logo.png';
 
 export function TitleBar() {
   return (
@@ -12,7 +12,7 @@ export function TitleBar() {
       
       {/* Title */}
       <div className="flex-1 flex items-center justify-center">
-        <Diamond className="w-4 h-4 text-primary mr-2" />
+        <img src={logoImage} alt="VividKit" className="w-5 h-5 rounded mr-2" />
         <span className="text-sm font-medium text-foreground/80">VividKit Desktop</span>
       </div>
       
