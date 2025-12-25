@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAppStore } from '@/stores/appStore';
 import { DashboardScreen } from '@/components/screens/DashboardScreen';
@@ -10,9 +11,11 @@ import { FilesScreen } from '@/components/screens/FilesScreen';
 import { GitScreen } from '@/components/screens/GitScreen';
 import { UsageScreen } from '@/components/screens/UsageScreen';
 import { WizardScreen } from '@/components/screens/WizardScreen';
+import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
   const { activeTab, selectedPlan } = useAppStore();
+  const [showSplash, setShowSplash] = useState(true);
   
   const renderScreen = () => {
     if (activeTab === 'plans' && selectedPlan) {
@@ -32,6 +35,10 @@ const Index = () => {
       default: return <DashboardScreen />;
     }
   };
+  
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
   
   return (
     <AppLayout>
