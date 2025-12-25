@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   ContextMenu,
+  ContextMenuTrigger,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
@@ -18,7 +19,6 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuShortcut,
-  ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { toast } from '@/hooks/use-toast';
 
