@@ -1,35 +1,43 @@
 import { useState } from 'react';
-import { GitBranch, Check, Plus, Minus, FileEdit, FileQuestion, Sparkles, Clock, User } from 'lucide-react';
+import { GitBranch, Check, Plus, Minus, ArrowDown, ArrowUp, RefreshCw, FileEdit, Send, GitPullRequest, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface GitFile {
   path: string;
-  status: 'modified' | 'added' | 'untracked';
+  status: 'modified' | 'added' | 'deleted' | 'renamed';
   staged: boolean;
+  linesAdded?: number;
+  linesRemoved?: number;
 }
 
 interface Commit {
   hash: string;
   message: string;
-  author: string;
   time: string;
 }
 
 export function GitScreen() {
   const [files, setFiles] = useState<GitFile[]>([
-    { path: 'src/auth/Login.tsx', status: 'modified', staged: true },
-    { path: 'src/auth/types.ts', status: 'added', staged: true },
-    { path: 'package.json', status: 'modified', staged: true },
-    { path: 'src/utils/helpers.ts', status: 'modified', staged: false },
-    { path: '.env.local', status: 'untracked', staged: false },
+    { path: 'auth/login.tsx', status: 'added', staged: true, linesAdded: 124 },
+    { path: 'utils/api.ts', status: 'modified', staged: true, linesAdded: 45, linesRemoved: 12 },
+    { path: 'types/auth.ts', status: 'added', staged: true, linesAdded: 38 },
+    { path: 'components/Header.tsx', status: 'modified', staged: false, linesAdded: 8, linesRemoved: 3 },
+    { path: 'old-auth.ts', status: 'deleted', staged: false, linesRemoved: 156 },
   ]);
   
-  const [commitMessage, setCommitMessage] = useState('feat(auth): add login component with OAuth2 support');
+  const [commitMessage, setCommitMessage] = useState(`feat(auth): implement login functionality
+
+- Add login component with OAuth2 support
+- Create auth utility functions
+- Define auth TypeScript types`);
+
+  const [selectedFile, setSelectedFile] = useState<string>('auth/login.tsx');
   
   const commits: Commit[] = [
-    { hash: 'a1b2c3d', message: 'fix(ui): button hover state', author: 'John Doe', time: '2 hours ago' },
-    { hash: 'd4e5f6g', message: 'feat: add dashboard', author: 'Jane Smith', time: '5 hours ago' },
-    { hash: 'h7i8j9k', message: 'chore: update deps', author: 'John Doe', time: '1 day ago' },
+    { hash: 'a3f2b1c', message: 'refactor: improve API error handling', time: '2h ago' },
+    { hash: '8d4e2f1', message: 'feat: add user profile page', time: '5h ago' },
+    { hash: '1c7b3a9', message: 'fix: resolve type errors in components', time: 'Yesterday' },
   ];
   
   const stagedFiles = files.filter(f => f.staged);
@@ -39,174 +47,190 @@ export function GitScreen() {
     setFiles(files.map(f => f.path === path ? { ...f, staged: !f.staged } : f));
   };
   
-  const stageAll = () => setFiles(files.map(f => ({ ...f, staged: true })));
-  const unstageAll = () => setFiles(files.map(f => ({ ...f, staged: false })));
-  
-  const getStatusIcon = (status: GitFile['status']) => {
+  const getStatusColor = (status: GitFile['status']) => {
     switch (status) {
-      case 'modified': return <FileEdit className="w-4 h-4 text-yellow-400" />;
-      case 'added': return <Plus className="w-4 h-4 text-green-400" />;
-      case 'untracked': return <FileQuestion className="w-4 h-4 text-muted-foreground" />;
-    }
-  };
-  
-  const getStatusLabel = (status: GitFile['status']) => {
-    switch (status) {
-      case 'modified': return 'M';
-      case 'added': return 'A';
-      case 'untracked': return '?';
+      case 'modified': return 'bg-warning';
+      case 'added': return 'bg-success';
+      case 'deleted': return 'bg-destructive';
+      case 'renamed': return 'bg-info';
     }
   };
   
   return (
     <div className="h-full flex flex-col animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-semibold">Git Operations</h1>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-lg text-sm">
-          <GitBranch className="w-4 h-4 text-primary" />
-          <span className="font-mono">main</span>
+      {/* Header Bar */}
+      <div className="flex items-center justify-between px-6 py-4 bg-card/50 border-b border-border/50 mb-0">
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-bold flex items-center gap-2">
+            🔀 Git Operations
+          </h1>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-accent/15 border border-accent/30 rounded-lg text-sm font-medium text-accent">
+            <span>🌿</span>
+            <span>feature/auth-system</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-success shadow-[0_0_8px_hsl(var(--success))]" />
+            Synced with origin
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" size="sm" className="gap-1.5">
+            <ArrowDown className="w-3.5 h-3.5" />
+            Pull
+          </Button>
+          <Button variant="secondary" size="sm" className="gap-1.5">
+            <ArrowUp className="w-3.5 h-3.5" />
+            Push
+          </Button>
+          <Button size="sm" className="gap-1.5">
+            <RefreshCw className="w-3.5 h-3.5" />
+            Sync
+          </Button>
         </div>
       </div>
       
-      {/* Staging Area */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        {/* Staged */}
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold flex items-center gap-2">
-              <Check className="w-4 h-4 text-green-400" />
-              Staged ({stagedFiles.length})
-            </h2>
-            <button
-              onClick={unstageAll}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-            >
-              <Minus className="w-3 h-3" />
-              Unstage All
-            </button>
+      {/* Main Content - Two Column Layout */}
+      <div className="flex-1 grid grid-cols-[300px_1fr] min-h-0">
+        {/* Left Panel - Changes */}
+        <div className="bg-secondary/30 border-r border-border/50 p-4 overflow-auto">
+          {/* Staged Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                ✅ Staged
+                <span className="px-1.5 py-0.5 bg-muted rounded text-[11px]">{stagedFiles.length}</span>
+              </span>
+            </div>
+            <div className="space-y-1">
+              {stagedFiles.map((file) => (
+                <button
+                  key={file.path}
+                  onClick={() => {
+                    setSelectedFile(file.path);
+                    toggleStage(file.path);
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
+                    "bg-card/50 hover:bg-card/80",
+                    selectedFile === file.path && "bg-accent/15 border border-accent/30"
+                  )}
+                >
+                  <span className={cn("w-2 h-2 rounded-sm", getStatusColor(file.status))} />
+                  <span className="flex-1 font-mono text-xs truncate text-left">{file.path}</span>
+                  <span className="text-[11px] text-muted-foreground font-mono">
+                    {file.linesAdded && <span className="text-success">+{file.linesAdded}</span>}
+                    {file.linesRemoved && <span className="text-destructive ml-1">-{file.linesRemoved}</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="space-y-1">
-            {stagedFiles.map((file) => (
-              <button
-                key={file.path}
-                onClick={() => toggleStage(file.path)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-secondary/50 transition-colors text-sm"
-              >
-                <div className={cn(
-                  "w-5 h-5 rounded border flex items-center justify-center",
-                  "bg-green-500 border-green-500"
-                )}>
-                  <Check className="w-3 h-3 text-white" />
-                </div>
-                <span className={cn(
-                  "text-xs font-mono px-1 rounded",
-                  file.status === 'modified' ? 'text-yellow-400' :
-                  file.status === 'added' ? 'text-green-400' : 'text-muted-foreground'
-                )}>
-                  {getStatusLabel(file.status)}
-                </span>
-                <span className="font-mono text-xs truncate">{file.path}</span>
-              </button>
-            ))}
+          
+          {/* Unstaged Section */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                📝 Changes
+                <span className="px-1.5 py-0.5 bg-muted rounded text-[11px]">{unstagedFiles.length}</span>
+              </span>
+            </div>
+            <div className="space-y-1">
+              {unstagedFiles.map((file) => (
+                <button
+                  key={file.path}
+                  onClick={() => {
+                    setSelectedFile(file.path);
+                    toggleStage(file.path);
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all text-sm",
+                    "bg-card/50 hover:bg-card/80",
+                    selectedFile === file.path && "bg-accent/15 border border-accent/30"
+                  )}
+                >
+                  <span className={cn("w-2 h-2 rounded-sm", getStatusColor(file.status))} />
+                  <span className="flex-1 font-mono text-xs truncate text-left">{file.path}</span>
+                  <span className="text-[11px] text-muted-foreground font-mono">
+                    {file.linesAdded && <span className="text-success">+{file.linesAdded}</span>}
+                    {file.linesRemoved && <span className="text-destructive ml-1">-{file.linesRemoved}</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         
-        {/* Unstaged */}
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold flex items-center gap-2">
-              <FileEdit className="w-4 h-4 text-muted-foreground" />
-              Unstaged ({unstagedFiles.length})
-            </h2>
-            <button
-              onClick={stageAll}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-            >
-              <Plus className="w-3 h-3" />
-              Stage All
+        {/* Right Panel - Actions */}
+        <div className="p-6 overflow-auto">
+          {/* Git Actions Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <button className="group p-6 bg-card/50 border border-border/50 rounded-xl text-center transition-all hover:border-border hover:-translate-y-0.5 hover:border-accent hover:shadow-[0_4px_20px_hsl(var(--accent)/0.2)]">
+              <div className="text-3xl mb-3">📝</div>
+              <div className="text-sm font-semibold mb-1">Commit</div>
+              <div className="text-xs text-muted-foreground font-mono">/git:cm</div>
+            </button>
+            <button className="group p-6 bg-card/50 border border-border/50 rounded-xl text-center transition-all hover:border-border hover:-translate-y-0.5">
+              <div className="text-3xl mb-3">🚀</div>
+              <div className="text-sm font-semibold mb-1">Commit & Push</div>
+              <div className="text-xs text-muted-foreground font-mono">/git:cp</div>
+            </button>
+            <button className="group p-6 bg-card/50 border border-border/50 rounded-xl text-center transition-all hover:border-border hover:-translate-y-0.5">
+              <div className="text-3xl mb-3">🔃</div>
+              <div className="text-sm font-semibold mb-1">Create PR</div>
+              <div className="text-xs text-muted-foreground font-mono">/git:pr</div>
             </button>
           </div>
-          <div className="space-y-1">
-            {unstagedFiles.map((file) => (
-              <button
-                key={file.path}
-                onClick={() => toggleStage(file.path)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-secondary/50 transition-colors text-sm"
-              >
-                <div className="w-5 h-5 rounded border border-muted-foreground" />
-                <span className={cn(
-                  "text-xs font-mono px-1 rounded",
-                  file.status === 'modified' ? 'text-yellow-400' :
-                  file.status === 'added' ? 'text-green-400' : 'text-muted-foreground'
-                )}>
-                  {getStatusLabel(file.status)}
-                </span>
-                <span className="font-mono text-xs truncate">{file.path}</span>
-              </button>
-            ))}
+          
+          {/* Commit Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold">Commit Message</span>
+              <span className="flex items-center gap-1.5 px-2.5 py-1 bg-accent/15 rounded text-[11px] text-accent">
+                <Sparkles className="w-3 h-3" />
+                AI Generated
+              </span>
+            </div>
+            <textarea
+              value={commitMessage}
+              onChange={(e) => setCommitMessage(e.target.value)}
+              placeholder="Enter commit message..."
+              className="w-full px-4 py-3.5 bg-secondary border border-border rounded-lg text-sm font-sans resize-none min-h-[100px] focus:outline-none focus:border-accent transition-colors"
+            />
+            <div className="flex items-center gap-3 mt-3">
+              <Button variant="secondary" size="sm" className="gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Regenerate
+              </Button>
+              <Button size="sm" className="gap-1.5">
+                <Check className="w-3.5 h-3.5" />
+                Commit Staged
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Commit Message */}
-      <div className="glass-card p-4 mb-6">
-        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          💬 Commit Message
-        </h2>
-        <input
-          type="text"
-          value={commitMessage}
-          onChange={(e) => setCommitMessage(e.target.value)}
-          className="w-full px-3 py-2 bg-input border border-border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary mb-3"
-        />
-        <div className="flex items-center justify-between">
-          <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80 transition-colors flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            AI Generate
-          </button>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Cancel
-            </button>
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
-              <Check className="w-4 h-4" />
-              Commit & Push
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Recent Commits */}
-      <div className="flex-1 glass-card p-4 overflow-hidden flex flex-col">
-        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          📜 Recent Commits
-        </h2>
-        <div className="flex-1 overflow-auto">
-          <table className="w-full">
-            <tbody>
+          
+          {/* Recent Commits */}
+          <div className="bg-card/50 border border-border/50 rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-border/50 text-sm font-semibold">
+              📜 Recent Commits
+            </div>
+            <div>
               {commits.map((commit, index) => (
-                <tr
+                <div
                   key={commit.hash}
-                  className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors animate-fade-in"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className={cn(
+                    "flex items-center gap-3 px-5 py-3 transition-colors hover:bg-card/80",
+                    index !== commits.length - 1 && "border-b border-border/50"
+                  )}
                 >
-                  <td className="py-3 pr-4">
-                    <span className="font-mono text-xs text-primary">{commit.hash}</span>
-                  </td>
-                  <td className="py-3 pr-4 text-sm">{commit.message}</td>
-                  <td className="py-3 pr-4 text-sm text-muted-foreground flex items-center gap-2">
-                    <User className="w-3.5 h-3.5" />
-                    {commit.author}
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5" />
-                    {commit.time}
-                  </td>
-                </tr>
+                  <span className="font-mono text-xs text-accent bg-accent/15 px-2 py-0.5 rounded">
+                    {commit.hash}
+                  </span>
+                  <span className="flex-1 text-sm truncate">{commit.message}</span>
+                  <span className="text-[11px] text-muted-foreground">{commit.time}</span>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
