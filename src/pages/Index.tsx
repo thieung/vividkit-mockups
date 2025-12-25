@@ -1,13 +1,42 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { AppLayout } from '@/components/layout/AppLayout';
+import { useAppStore } from '@/stores/appStore';
+import { DashboardScreen } from '@/components/screens/DashboardScreen';
+import { ChatScreen } from '@/components/screens/ChatScreen';
+import { PlansScreen } from '@/components/screens/PlansScreen';
+import { PlanDetailScreen } from '@/components/screens/PlanDetailScreen';
+import { SessionsScreen } from '@/components/screens/SessionsScreen';
+import { SettingsScreen } from '@/components/screens/SettingsScreen';
+import { FilesScreen } from '@/components/screens/FilesScreen';
+import { GitScreen } from '@/components/screens/GitScreen';
+import { UsageScreen } from '@/components/screens/UsageScreen';
+import { WizardScreen } from '@/components/screens/WizardScreen';
 
 const Index = () => {
+  const { activeTab, selectedPlan } = useAppStore();
+  
+  const renderScreen = () => {
+    if (activeTab === 'plans' && selectedPlan) {
+      return <PlanDetailScreen />;
+    }
+    
+    switch (activeTab) {
+      case 'dashboard': return <DashboardScreen />;
+      case 'wizard': return <WizardScreen />;
+      case 'chat': return <ChatScreen />;
+      case 'plans': return <PlansScreen />;
+      case 'sessions': return <SessionsScreen />;
+      case 'settings': return <SettingsScreen />;
+      case 'files': return <FilesScreen />;
+      case 'git': return <GitScreen />;
+      case 'usage': return <UsageScreen />;
+      default: return <DashboardScreen />;
+    }
+  };
+  
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <AppLayout>
+      {renderScreen()}
+    </AppLayout>
   );
 };
 
