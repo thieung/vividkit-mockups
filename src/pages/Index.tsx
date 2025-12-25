@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useAppStore } from '@/stores/appStore';
 import { DashboardScreen } from '@/components/screens/DashboardScreen';
 import { ChatScreen } from '@/components/screens/ChatScreen';
+import { BrainstormScreen } from '@/components/screens/BrainstormScreen';
 import { PlansScreen } from '@/components/screens/PlansScreen';
 import { PlanDetailScreen } from '@/components/screens/PlanDetailScreen';
 import { SessionsScreen } from '@/components/screens/SessionsScreen';
@@ -26,6 +27,7 @@ const Index = () => {
       case 'dashboard': return <DashboardScreen />;
       case 'wizard': return <WizardScreen />;
       case 'chat': return <ChatScreen />;
+      case 'brainstorm': return <BrainstormScreen />;
       case 'plans': return <PlansScreen />;
       case 'sessions': return <SessionsScreen />;
       case 'settings': return <SettingsScreen />;

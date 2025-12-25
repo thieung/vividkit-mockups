@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type TabId = 'dashboard' | 'wizard' | 'chat' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
+export type TabId = 'dashboard' | 'wizard' | 'chat' | 'brainstorm' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
 
 export interface Project {
   id: string;
@@ -45,6 +45,22 @@ export interface ActivityItem {
   timestamp: string;
 }
 
+export interface BrainstormAnnotation {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface BrainstormReport {
+  id: string;
+  title: string;
+  content: string;
+  status: 'new' | 'refining' | 'ready' | 'converted';
+  tags: string[];
+  annotations: BrainstormAnnotation[];
+  createdAt: string;
+}
+
 interface AppState {
   // Navigation
   activeTab: TabId;
@@ -83,6 +99,13 @@ interface AppState {
   
   // Activity
   recentActivity: ActivityItem[];
+  
+  // Brainstorm
+  brainstormReports: BrainstormReport[];
+  selectedBrainstorm: string | null;
+  setSelectedBrainstorm: (id: string | null) => void;
+  updateBrainstormReport: (id: string, updates: Partial<BrainstormReport>) => void;
+  deleteBrainstormReport: (id: string) => void;
   
   // Modals
   isNewProjectOpen: boolean;
@@ -186,6 +209,48 @@ export const useAppStore = create<AppState>((set) => ({
     { id: '3', type: 'responded', message: 'Claude responded', timestamp: '8m ago' },
     { id: '4', type: 'brainstorm', message: 'New brainstorm', timestamp: '15m ago' },
   ],
+  
+  // Brainstorm
+  brainstormReports: [
+    {
+      id: '1',
+      title: 'Authentication System Ideas',
+      content: 'Exploring different approaches for user authentication:\n\n1. OAuth2 with social providers (Google, GitHub)\n2. Magic link authentication for passwordless login\n3. Traditional email/password with 2FA support\n4. WebAuthn for biometric authentication\n\nConsiderations:\n- User experience vs security trade-offs\n- Mobile-first approach needed\n- Session management strategy',
+      status: 'ready',
+      tags: ['auth', 'security', 'UX'],
+      annotations: [
+        { id: '1', content: 'Prefer OAuth2 for initial MVP - simpler implementation', createdAt: '2024-12-24T10:00:00Z' },
+      ],
+      createdAt: '2024-12-23T09:00:00Z',
+    },
+    {
+      id: '2',
+      title: 'Dashboard Component Architecture',
+      content: 'Breaking down the dashboard into reusable components:\n\n- MetricCard: displays KPIs with trend indicators\n- ActivityFeed: real-time updates stream\n- QuickActions: frequently used actions grid\n- RecentItems: last accessed documents/projects\n\nState management: Consider using Zustand for local state, React Query for server state.',
+      status: 'refining',
+      tags: ['architecture', 'components'],
+      annotations: [],
+      createdAt: '2024-12-22T14:30:00Z',
+    },
+    {
+      id: '3',
+      title: 'API Rate Limiting Strategy',
+      content: 'Need to implement rate limiting for public APIs:\n\n- Token bucket algorithm for flexibility\n- Redis for distributed rate limiting\n- Different tiers: free (100 req/min), pro (1000 req/min)\n- Graceful degradation when limits hit',
+      status: 'new',
+      tags: ['API', 'performance'],
+      annotations: [],
+      createdAt: '2024-12-24T08:00:00Z',
+    },
+  ],
+  selectedBrainstorm: null,
+  setSelectedBrainstorm: (id) => set({ selectedBrainstorm: id }),
+  updateBrainstormReport: (id, updates) => set((state) => ({
+    brainstormReports: state.brainstormReports.map(r => r.id === id ? { ...r, ...updates } : r)
+  })),
+  deleteBrainstormReport: (id) => set((state) => ({
+    brainstormReports: state.brainstormReports.filter(r => r.id !== id),
+    selectedBrainstorm: state.selectedBrainstorm === id ? null : state.selectedBrainstorm,
+  })),
   
   // Modals
   isNewProjectOpen: false,

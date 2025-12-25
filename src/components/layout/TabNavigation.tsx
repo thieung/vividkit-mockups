@@ -1,4 +1,4 @@
-import { LayoutDashboard, Wand2, MessageSquare, ClipboardList, Layers, Settings, FolderOpen, GitBranch, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Wand2, MessageSquare, Lightbulb, ClipboardList, Layers, Settings, FolderOpen, GitBranch, BarChart3 } from 'lucide-react';
 import { useAppStore, TabId } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 
@@ -6,6 +6,7 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'wizard', label: 'Wizard', icon: Wand2 },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
+  { id: 'brainstorm', label: 'Brainstorm', icon: Lightbulb },
   { id: 'plans', label: 'Plans', icon: ClipboardList },
   { id: 'sessions', label: 'Sessions', icon: Layers },
   { id: 'files', label: 'Files', icon: FolderOpen },
