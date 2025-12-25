@@ -6,6 +6,81 @@
 
 @layer base {
   :root {
+    /* Light Mode Theme */
+    --background: 210 20% 98%;
+    --foreground: 220 16% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 16% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 16% 12%;
+
+    --primary: 187 85% 43%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 93%;
+    --secondary-foreground: 220 16% 20%;
+
+    --muted: 210 15% 90%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 267 75% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 92%;
+    --ring: 187 85% 43%;
+
+    --radius: 0.75rem;
+
+    /* Provider colors */
+    --claude: 270 80% 55%;
+    --antigravity: 210 90% 50%;
+    --gemini: 280 60% 55%;
+    --copilot: 24 90% 45%;
+    --glm: 0 70% 50%;
+    --openrouter: 160 80% 38%;
+
+    /* Priority colors */
+    --priority-high: 0 70% 50%;
+    --priority-medium: 40 90% 45%;
+    --priority-low: 140 60% 38%;
+
+    /* Status colors */
+    --status-online: 140 60% 38%;
+    --status-offline: 0 60% 45%;
+    --status-degraded: 40 90% 45%;
+
+    /* Glassmorphism */
+    --glass-bg: 0 0% 100% / 0.9;
+    --glass-border: 214 20% 85% / 0.6;
+    --glass-blur: 12px;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(187 85% 43%), hsl(267 75% 58%));
+    --gradient-claude: linear-gradient(135deg, hsl(270 80% 55%), hsl(290 70% 50%));
+    --gradient-success: linear-gradient(135deg, hsl(140 60% 38%), hsl(160 60% 42%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(187 85% 43% / 0.1);
+    --shadow-card: 0 4px 24px hsl(220 16% 12% / 0.08);
+
+    /* Sidebar */
+    --sidebar-background: 210 15% 96%;
+    --sidebar-foreground: 220 16% 30%;
+    --sidebar-primary: 187 85% 43%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 92%;
+    --sidebar-accent-foreground: 220 16% 15%;
+    --sidebar-border: 214 20% 90%;
+    --sidebar-ring: 187 85% 43%;
+  }
+
+  .dark {
     /* Dark IDE Theme */
     --background: 220 16% 8%;
     --foreground: 210 20% 95%;
@@ -34,8 +109,6 @@
     --border: 220 16% 18%;
     --input: 220 16% 16%;
     --ring: 187 92% 55%;
-
-    --radius: 0.75rem;
 
     /* Provider colors */
     --claude: 270 100% 70%;
