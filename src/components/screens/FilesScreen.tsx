@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Folder, File, Search, Plus, FolderOpen, Copy, Grid3X3, List, ChevronRight, ExternalLink, Code2, ChevronDown } from 'lucide-react';
+import { Folder, File, Search, Plus, FolderOpen, Copy, Grid3X3, List, ChevronRight, ExternalLink, Code2, ChevronDown, Trash2, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -9,6 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { toast } from '@/hooks/use-toast';
 
 interface FileItem {
@@ -76,8 +87,44 @@ export function FilesScreen() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [preferredIDE, setPreferredIDE] = useState<string>('vscode');
+  const [filesList, setFilesList] = useState<FileItem[]>(files);
   
   const currentPath = '/Users/project/src/components/auth';
+  
+  const copyPath = (fileName: string) => {
+    const filePath = `${currentPath}/${fileName}`;
+    navigator.clipboard.writeText(filePath);
+    toast({
+      title: 'Path Copied',
+      description: filePath,
+    });
+  };
+  
+  const handleRename = (fileName: string) => {
+    const newName = prompt('Enter new name:', fileName);
+    if (newName && newName !== fileName) {
+      setFilesList(prev => prev.map(f => 
+        f.name === fileName ? { ...f, name: newName } : f
+      ));
+      toast({
+        title: 'File Renamed',
+        description: `${fileName} → ${newName}`,
+      });
+    }
+  };
+  
+  const handleDelete = (fileName: string) => {
+    if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+      setFilesList(prev => prev.filter(f => f.name !== fileName));
+      if (selectedFile === fileName) {
+        setSelectedFile(null);
+      }
+      toast({
+        title: 'File Deleted',
+        description: fileName,
+      });
+    }
+  };
   
   const openInIDE = (fileName: string, ideId?: string) => {
     const ide = ideOptions.find(i => i.id === (ideId || preferredIDE)) || ideOptions[0];
@@ -165,47 +212,96 @@ export function FilesScreen() {
           "flex-1 overflow-auto",
           viewMode === 'grid' ? "grid grid-cols-4 gap-3 content-start" : "space-y-1"
         )}>
-          {files.map((file, index) => (
-            <button
-              key={file.name}
-              onClick={() => setSelectedFile(file.name)}
-              className={cn(
-                "text-left transition-all animate-fade-in",
-                viewMode === 'grid' 
-                  ? "glass-card p-4 hover:border-primary/50" 
-                  : "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/50",
-                selectedFile === file.name && "border-primary bg-primary/5"
-              )}
-              style={{ animationDelay: `${index * 30}ms` }}
-            >
-              {viewMode === 'grid' ? (
-                <>
-                  <div className="flex justify-center mb-3">
-                    {file.type === 'folder' ? (
-                      <Folder className="w-10 h-10 text-primary" />
-                    ) : (
-                      <File className="w-10 h-10 text-muted-foreground" />
-                    )}
-                  </div>
-                  <p className="text-sm font-medium truncate">{file.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {file.type === 'folder' ? `${file.items} items` : file.size}
-                  </p>
-                </>
-              ) : (
-                <>
-                  {file.type === 'folder' ? (
-                    <Folder className="w-5 h-5 text-primary" />
-                  ) : (
-                    <File className="w-5 h-5 text-muted-foreground" />
+          {filesList.map((file, index) => (
+            <ContextMenu key={file.name}>
+              <ContextMenuTrigger asChild>
+                <button
+                  onClick={() => setSelectedFile(file.name)}
+                  className={cn(
+                    "text-left transition-all animate-fade-in",
+                    viewMode === 'grid' 
+                      ? "glass-card p-4 hover:border-primary/50" 
+                      : "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/50",
+                    selectedFile === file.name && "border-primary bg-primary/5"
                   )}
-                  <span className="text-sm flex-1">{file.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {file.type === 'folder' ? `${file.items} items` : file.size}
-                  </span>
-                </>
-              )}
-            </button>
+                  style={{ animationDelay: `${index * 30}ms` }}
+                >
+                  {viewMode === 'grid' ? (
+                    <>
+                      <div className="flex justify-center mb-3">
+                        {file.type === 'folder' ? (
+                          <Folder className="w-10 h-10 text-primary" />
+                        ) : (
+                          <File className="w-10 h-10 text-muted-foreground" />
+                        )}
+                      </div>
+                      <p className="text-sm font-medium truncate">{file.name}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {file.type === 'folder' ? `${file.items} items` : file.size}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {file.type === 'folder' ? (
+                        <Folder className="w-5 h-5 text-primary" />
+                      ) : (
+                        <File className="w-5 h-5 text-muted-foreground" />
+                      )}
+                      <span className="text-sm flex-1">{file.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {file.type === 'folder' ? `${file.items} items` : file.size}
+                      </span>
+                    </>
+                  )}
+                </button>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-56">
+                {file.type === 'file' && (
+                  <>
+                    <ContextMenuSub>
+                      <ContextMenuSubTrigger>
+                        <Code2 className="w-4 h-4 mr-2" />
+                        Open in IDE
+                      </ContextMenuSubTrigger>
+                      <ContextMenuSubContent className="w-48">
+                        {ideOptions.map(ide => (
+                          <ContextMenuItem 
+                            key={ide.id}
+                            onClick={() => openInIDE(file.name, ide.id)}
+                          >
+                            <span className="mr-2">{ide.icon}</span>
+                            {ide.name}
+                            {preferredIDE === ide.id && (
+                              <ContextMenuShortcut>Default</ContextMenuShortcut>
+                            )}
+                          </ContextMenuItem>
+                        ))}
+                      </ContextMenuSubContent>
+                    </ContextMenuSub>
+                    <ContextMenuSeparator />
+                  </>
+                )}
+                <ContextMenuItem onClick={() => copyPath(file.name)}>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Path
+                  <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => handleRename(file.name)}>
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Rename
+                  <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem 
+                  onClick={() => handleDelete(file.name)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                  <ContextMenuShortcut>⌫</ContextMenuShortcut>
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           ))}
         </div>
         
