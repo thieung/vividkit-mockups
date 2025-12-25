@@ -11,7 +11,7 @@ import { SettingsScreen } from '@/components/screens/SettingsScreen';
 import { FilesScreen } from '@/components/screens/FilesScreen';
 import { GitScreen } from '@/components/screens/GitScreen';
 import { UsageScreen } from '@/components/screens/UsageScreen';
-import { WizardScreen } from '@/components/screens/WizardScreen';
+import { AIInterviewScreen } from '@/components/screens/AIInterviewScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
@@ -25,7 +25,7 @@ const Index = () => {
     
     switch (activeTab) {
       case 'dashboard': return <DashboardScreen />;
-      case 'wizard': return <WizardScreen />;
+      case 'wizard': return <AIInterviewScreen />;
       case 'chat': return <ChatScreen />;
       case 'brainstorm': return <BrainstormScreen />;
       case 'plans': return <PlansScreen />;
