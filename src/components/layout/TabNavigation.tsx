@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const allTabs: { id: TabId; label: string; simpleLabel?: string; icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', simpleLabel: 'Home', icon: LayoutDashboard },
-  { id: 'wizard', label: 'AI Interview', simpleLabel: 'Build with AI', icon: Wand2 },
+  { id: 'wizard', label: 'Wizard', simpleLabel: 'Build with AI', icon: Wand2 },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'brainstorm', label: 'Brainstorm', icon: Lightbulb },
   { id: 'plans', label: 'Plans', simpleLabel: 'My Project', icon: ClipboardList },

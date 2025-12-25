@@ -11,11 +11,12 @@ import { SettingsScreen } from '@/components/screens/SettingsScreen';
 import { FilesScreen } from '@/components/screens/FilesScreen';
 import { GitScreen } from '@/components/screens/GitScreen';
 import { UsageScreen } from '@/components/screens/UsageScreen';
+import { WizardScreen } from '@/components/screens/WizardScreen';
 import { AIInterviewScreen } from '@/components/screens/AIInterviewScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
-  const { activeTab, selectedPlan } = useAppStore();
+  const { activeTab, selectedPlan, userMode } = useAppStore();
   const [showSplash, setShowSplash] = useState(true);
   
   const renderScreen = () => {
@@ -25,7 +26,7 @@ const Index = () => {
     
     switch (activeTab) {
       case 'dashboard': return <DashboardScreen />;
-      case 'wizard': return <AIInterviewScreen />;
+      case 'wizard': return userMode === 'simple' ? <AIInterviewScreen /> : <WizardScreen />;
       case 'chat': return <ChatScreen />;
       case 'brainstorm': return <BrainstormScreen />;
       case 'plans': return <PlansScreen />;
