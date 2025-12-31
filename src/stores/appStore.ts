@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type TabId = 'dashboard' | 'wizard' | 'concept' | 'chat' | 'brainstorm' | 'fix' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
+export type TabId = 'dashboard' | 'wizard' | 'concept' | 'chat' | 'brainstorm' | 'fix' | 'design' | 'plans' | 'sessions' | 'settings' | 'files' | 'git' | 'usage';
 
 export interface InterviewAnswer {
   questionId: string;
@@ -11,7 +11,7 @@ export interface InterviewAnswer {
 export type UserMode = 'simple' | 'advanced';
 
 // Tabs visible in Simple mode (non-tech users) - AI Interview is the main entry point
-export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'brainstorm', 'fix', 'plans', 'settings'];
+export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'brainstorm', 'fix', 'design', 'plans', 'settings'];
 
 // All tabs visible in Advanced mode (developers) - Both AI Interview and direct Chat
 export const ADVANCED_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'chat', 'brainstorm', 'plans', 'sessions', 'files', 'git', 'usage', 'settings'];
