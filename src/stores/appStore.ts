@@ -11,7 +11,7 @@ export interface InterviewAnswer {
 export type UserMode = 'simple' | 'advanced';
 
 // Tabs visible in Simple mode (non-tech users) - AI Interview is the main entry point
-export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'plans', 'settings'];
+export const SIMPLE_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'brainstorm', 'plans', 'settings'];
 
 // All tabs visible in Advanced mode (developers) - Both AI Interview and direct Chat
 export const ADVANCED_MODE_TABS: TabId[] = ['dashboard', 'wizard', 'chat', 'brainstorm', 'plans', 'sessions', 'files', 'git', 'usage', 'settings'];
