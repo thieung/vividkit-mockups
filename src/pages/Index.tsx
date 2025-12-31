@@ -15,6 +15,7 @@ import { UsageScreen } from '@/components/screens/UsageScreen';
 import { WizardScreen } from '@/components/screens/WizardScreen';
 import { AIInterviewScreen } from '@/components/screens/AIInterviewScreen';
 import { ConceptPreviewScreen } from '@/components/screens/ConceptPreviewScreen';
+import { CookScreen } from '@/components/screens/CookScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
@@ -30,7 +31,7 @@ const Index = () => {
       case 'dashboard': return userMode === 'simple' ? <SimpleDashboard /> : <DashboardScreen />;
       case 'wizard': return userMode === 'simple' ? <AIInterviewScreen /> : <WizardScreen />;
       case 'concept': return <ConceptPreviewScreen />;
-      case 'chat': return <ChatScreen />;
+      case 'chat': return userMode === 'simple' ? <CookScreen /> : <ChatScreen />;
       case 'brainstorm': return <BrainstormScreen />;
       case 'plans': return <PlansScreen />;
       case 'sessions': return <SessionsScreen />;
