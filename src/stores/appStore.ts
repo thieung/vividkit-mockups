@@ -122,6 +122,7 @@ interface AppState {
   brainstormReports: BrainstormReport[];
   selectedBrainstorm: string | null;
   setSelectedBrainstorm: (id: string | null) => void;
+  addBrainstormReport: (report: Omit<BrainstormReport, 'id' | 'createdAt'>) => void;
   updateBrainstormReport: (id: string, updates: Partial<BrainstormReport>) => void;
   deleteBrainstormReport: (id: string) => void;
   
@@ -270,6 +271,13 @@ export const useAppStore = create<AppState>((set) => ({
   ],
   selectedBrainstorm: null,
   setSelectedBrainstorm: (id) => set({ selectedBrainstorm: id }),
+  addBrainstormReport: (report) => set((state) => ({
+    brainstormReports: [{
+      ...report,
+      id: String(Date.now()),
+      createdAt: new Date().toISOString(),
+    }, ...state.brainstormReports]
+  })),
   updateBrainstormReport: (id, updates) => set((state) => ({
     brainstormReports: state.brainstormReports.map(r => r.id === id ? { ...r, ...updates } : r)
   })),
