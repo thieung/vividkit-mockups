@@ -96,6 +96,10 @@ interface AppState {
   closeShortcutsModal: () => void;
   toggleShortcutsModal: () => void;
   
+  // Onboarding Tour
+  hasCompletedOnboarding: boolean;
+  setOnboardingComplete: (complete: boolean) => void;
+  
   // Projects
   projects: Project[];
   activeProject: string | null;
@@ -155,6 +159,13 @@ export const useAppStore = create<AppState>((set) => ({
   openShortcutsModal: () => set({ isShortcutsModalOpen: true }),
   closeShortcutsModal: () => set({ isShortcutsModalOpen: false }),
   toggleShortcutsModal: () => set((state) => ({ isShortcutsModalOpen: !state.isShortcutsModalOpen })),
+  
+  // Onboarding Tour
+  hasCompletedOnboarding: localStorage.getItem('vividkit-onboarding-complete') === 'true',
+  setOnboardingComplete: (complete) => {
+    localStorage.setItem('vividkit-onboarding-complete', String(complete));
+    set({ hasCompletedOnboarding: complete });
+  },
   
   // Projects
   projects: [
