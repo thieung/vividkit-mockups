@@ -18,6 +18,7 @@ import { ConceptPreviewScreen } from '@/components/screens/ConceptPreviewScreen'
 import { CookScreen } from '@/components/screens/CookScreen';
 import { FixScreen } from '@/components/screens/FixScreen';
 import { DesignUploadScreen } from '@/components/screens/DesignUploadScreen';
+import { SavePublishScreen } from '@/components/screens/SavePublishScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
 
 const Index = () => {
@@ -37,6 +38,7 @@ const Index = () => {
       case 'brainstorm': return <BrainstormScreen />;
       case 'fix': return <FixScreen />;
       case 'design': return <DesignUploadScreen />;
+      case 'save': return <SavePublishScreen />;
       case 'plans': return <PlansScreen />;
       case 'sessions': return <SessionsScreen />;
       case 'settings': return <SettingsScreen />;

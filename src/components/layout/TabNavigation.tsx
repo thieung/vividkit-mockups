@@ -1,4 +1,4 @@
-import { LayoutDashboard, Wand2, MessageSquare, Lightbulb, ClipboardList, Layers, Settings, FolderOpen, GitBranch, BarChart3, AlertCircle, FileImage } from 'lucide-react';
+import { LayoutDashboard, Wand2, MessageSquare, Lightbulb, ClipboardList, Layers, Settings, FolderOpen, GitBranch, BarChart3, AlertCircle, FileImage, Save } from 'lucide-react';
 import { useAppStore, TabId, SIMPLE_MODE_TABS, ADVANCED_MODE_TABS } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +9,7 @@ const allTabs: { id: TabId; label: string; simpleLabel?: string; icon: React.Ele
   { id: 'brainstorm', label: 'Brainstorm', simpleLabel: 'Ideas', icon: Lightbulb },
   { id: 'fix', label: 'Fix', simpleLabel: 'Help!', icon: AlertCircle },
   { id: 'design', label: 'Design Upload', simpleLabel: 'Upload Design', icon: FileImage },
+  { id: 'save', label: 'Git', simpleLabel: 'Save & Publish', icon: Save },
   { id: 'plans', label: 'Plans', simpleLabel: 'My Project', icon: ClipboardList },
   { id: 'sessions', label: 'Sessions', icon: Layers },
   { id: 'files', label: 'Files', icon: FolderOpen },
