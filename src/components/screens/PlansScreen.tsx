@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAppStore, Plan } from '@/stores/appStore';
+import { useAppStore, Plan, PlanPhase } from '@/stores/appStore';
 import { 
   Plus, 
   Search, 
@@ -19,19 +19,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-
-interface PlanPhase {
-  id: string;
-  name: string;
-  status: 'pending' | 'active' | 'done';
-  order: number;
-}
-
-interface EnhancedPlan extends Plan {
-  phases?: PlanPhase[];
-  dependencies?: string[];
-  complexity?: 'fast' | 'medium' | 'complex' | 'ultra';
-}
 
 const columns = [
   { id: 'draft', label: 'Ideas', icon: FileText, color: 'text-muted-foreground' },
@@ -53,38 +40,20 @@ const priorityConfig = {
   P3: { label: 'Low', color: 'bg-muted text-muted-foreground border-border' },
 };
 
-// Mock enhanced plans with phases
-const getEnhancedPlans = (plans: Plan[]): EnhancedPlan[] => {
-  return plans.map(plan => ({
-    ...plan,
-    phases: [
-      { id: '1', name: 'Research', status: plan.progress > 0 ? 'done' : 'pending', order: 1 },
-      { id: '2', name: 'Plan', status: plan.progress > 25 ? 'done' : plan.progress > 0 ? 'active' : 'pending', order: 2 },
-      { id: '3', name: 'Build', status: plan.progress > 75 ? 'done' : plan.progress > 25 ? 'active' : 'pending', order: 3 },
-      { id: '4', name: 'Test', status: plan.progress === 100 ? 'done' : plan.progress > 75 ? 'active' : 'pending', order: 4 },
-    ],
-    dependencies: plan.id === '1' ? ['5'] : plan.id === '4' ? ['1'] : [],
-    complexity: plan.priority === 'P1' ? 'complex' : plan.priority === 'P2' ? 'medium' : 'fast',
-  }));
-};
-
 export function PlansScreen() {
-  const { plans, setSelectedPlan, setActiveTab } = useAppStore();
+  const { plans, setSelectedPlan } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [draggedPlan, setDraggedPlan] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
 
-  const enhancedPlans = getEnhancedPlans(plans);
-
   const getPlansForColumn = (status: Plan['status']) => {
-    return enhancedPlans
+    return plans
       .filter(p => p.status === status)
       .filter(p => searchQuery === '' || p.title.toLowerCase().includes(searchQuery.toLowerCase()));
   };
 
-  const handlePlanClick = (plan: EnhancedPlan) => {
+  const handlePlanClick = (plan: Plan) => {
     setSelectedPlan(plan.id);
-    setActiveTab('plans');
   };
 
   const handleDragStart = (e: React.DragEvent, planId: string) => {
@@ -110,7 +79,7 @@ export function PlansScreen() {
   };
 
   const getDependencyPlan = (depId: string) => {
-    return enhancedPlans.find(p => p.id === depId);
+    return plans.find(p => p.id === depId);
   };
 
   return (
