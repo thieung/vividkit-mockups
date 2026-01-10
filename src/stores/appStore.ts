@@ -23,13 +23,6 @@ export interface Project {
   isActive?: boolean;
 }
 
-export interface PlanPhase {
-  id: string;
-  name: string;
-  status: 'pending' | 'active' | 'done';
-  file?: string;
-}
-
 export interface Plan {
   id: string;
   title: string;
@@ -38,12 +31,6 @@ export interface Plan {
   progress: number;
   date: string;
   provider?: string;
-  description?: string;
-  phases?: PlanPhase[];
-  dependencies?: string[];
-  complexity?: 'fast' | 'medium' | 'complex' | 'ultra';
-  technicalDecisions?: string[];
-  successCriteria?: { id: string; text: string; done: boolean }[];
 }
 
 export interface Session {
@@ -109,10 +96,6 @@ interface AppState {
   closeShortcutsModal: () => void;
   toggleShortcutsModal: () => void;
   
-  // Onboarding Tour
-  hasCompletedOnboarding: boolean;
-  setOnboardingComplete: (complete: boolean) => void;
-  
   // Projects
   projects: Project[];
   activeProject: string | null;
@@ -173,13 +156,6 @@ export const useAppStore = create<AppState>((set) => ({
   closeShortcutsModal: () => set({ isShortcutsModalOpen: false }),
   toggleShortcutsModal: () => set((state) => ({ isShortcutsModalOpen: !state.isShortcutsModalOpen })),
   
-  // Onboarding Tour
-  hasCompletedOnboarding: localStorage.getItem('vividkit-onboarding-complete') === 'true',
-  setOnboardingComplete: (complete) => {
-    localStorage.setItem('vividkit-onboarding-complete', String(complete));
-    set({ hasCompletedOnboarding: complete });
-  },
-  
   // Projects
   projects: [
     { id: '1', name: 'auth-app', path: '~/projects/auth-app', isActive: true },
@@ -194,95 +170,13 @@ export const useAppStore = create<AppState>((set) => ({
   
   // Plans
   plans: [
-    { 
-      id: '1', 
-      title: 'Auth System Implementation', 
-      status: 'in_progress', 
-      priority: 'P1', 
-      progress: 65, 
-      date: 'Dec 24', 
-      provider: 'claude',
-      description: 'Implement complete authentication system with OAuth2, session management, and role-based access control.',
-      phases: [
-        { id: '1', name: 'Research', status: 'done', file: 'phase-01-research.md' },
-        { id: '2', name: 'Plan', status: 'done', file: 'phase-02-plan.md' },
-        { id: '3', name: 'Build', status: 'active', file: 'phase-03-build.md' },
-        { id: '4', name: 'Test', status: 'pending', file: 'phase-04-test.md' },
-      ],
-      complexity: 'complex',
-      dependencies: ['5'],
-      technicalDecisions: ['Use better-auth for OAuth2', 'JWT tokens with refresh', 'Redis for session store'],
-      successCriteria: [
-        { id: '1', text: 'Login/Logout works', done: true },
-        { id: '2', text: 'OAuth2 providers integrated', done: true },
-        { id: '3', text: 'Session persistence', done: false },
-        { id: '4', text: 'Role-based access', done: false },
-      ]
-    },
-    { 
-      id: '2', 
-      title: 'Collapsible TOC for Guides', 
-      status: 'draft', 
-      priority: 'P2', 
-      progress: 0, 
-      date: 'Dec 11',
-      description: 'Add collapsible Table of Contents to all Guides pages with sticky scroll and glassmorphism styling.',
-      phases: [
-        { id: '1', name: 'Update TOC Component', status: 'pending', file: 'phase-01-update-toc.md' },
-        { id: '2', name: 'Integrate into Layout', status: 'pending', file: 'phase-02-integrate.md' },
-      ],
-      complexity: 'fast',
-      technicalDecisions: ['localStorage for collapse state', 'Hidden on mobile', 'glass-card class'],
-      successCriteria: [
-        { id: '1', text: 'TOC visible on lg+ screens', done: false },
-        { id: '2', text: 'Sticky on scroll', done: false },
-        { id: '3', text: 'Glassmorphism styling', done: false },
-      ]
-    },
-    { 
-      id: '3', 
-      title: 'Mobile Layout Refactor', 
-      status: 'draft', 
-      priority: 'P3', 
-      progress: 0, 
-      date: 'Dec 15',
-      description: 'Refactor layout components to be fully responsive with mobile-first approach.',
-      complexity: 'medium'
-    },
-    { 
-      id: '4', 
-      title: 'Dark Mode Support', 
-      status: 'review', 
-      priority: 'P2', 
-      progress: 90, 
-      date: 'Dec 20',
-      description: 'Complete dark mode implementation with system preference detection and smooth transitions.',
-      phases: [
-        { id: '1', name: 'CSS Variables', status: 'done' },
-        { id: '2', name: 'Theme Toggle', status: 'done' },
-        { id: '3', name: 'System Detection', status: 'done' },
-        { id: '4', name: 'Polish', status: 'active' },
-      ],
-      complexity: 'medium',
-      dependencies: ['1']
-    },
-    { 
-      id: '5', 
-      title: 'API Endpoints', 
-      status: 'done', 
-      priority: 'P1', 
-      progress: 100, 
-      date: 'Dec 18',
-      description: 'Create REST API endpoints for all core functionality.',
-      phases: [
-        { id: '1', name: 'Design', status: 'done' },
-        { id: '2', name: 'Implement', status: 'done' },
-        { id: '3', name: 'Test', status: 'done' },
-      ],
-      complexity: 'complex'
-    },
-    { id: '6', title: 'DB Migration', status: 'done', priority: 'P2', progress: 100, date: 'Dec 16', complexity: 'medium' },
-    { id: '7', title: 'Cache Layer', status: 'done', priority: 'P3', progress: 100, date: 'Dec 14', complexity: 'fast' },
+    { id: '1', title: 'Auth System Implementation', status: 'in_progress', priority: 'P1', progress: 65, date: 'Dec 24', provider: 'claude' },
+    { id: '2', title: 'Collapsible TOC for Guides', status: 'draft', priority: 'P2', progress: 0, date: 'Dec 11' },
+    { id: '3', title: 'Mobile Layout Refactor', status: 'draft', priority: 'P3', progress: 0, date: 'Dec 15' },
+    { id: '4', title: 'Dark Mode Support', status: 'review', priority: 'P2', progress: 90, date: 'Dec 20' },
+    { id: '5', title: 'API Endpoints', status: 'done', priority: 'P1', progress: 100, date: 'Dec 18' },
+    { id: '6', title: 'DB Migration', status: 'done', priority: 'P2', progress: 100, date: 'Dec 16' },
+    { id: '7', title: 'Cache Layer', status: 'done', priority: 'P3', progress: 100, date: 'Dec 14' },
   ],
   selectedPlan: null,
   setSelectedPlan: (id) => set({ selectedPlan: id }),

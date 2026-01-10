@@ -20,24 +20,10 @@ import { FixScreen } from '@/components/screens/FixScreen';
 import { DesignUploadScreen } from '@/components/screens/DesignUploadScreen';
 import { SavePublishScreen } from '@/components/screens/SavePublishScreen';
 import { SplashScreen } from '@/components/features/SplashScreen';
-import { OnboardingTour } from '@/components/features/OnboardingTour';
 
 const Index = () => {
-  const { activeTab, selectedPlan, userMode, hasCompletedOnboarding, setOnboardingComplete, setActiveTab } = useAppStore();
+  const { activeTab, selectedPlan, userMode } = useAppStore();
   const [showSplash, setShowSplash] = useState(true);
-  const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding);
-  
-  const handleOnboardingComplete = () => {
-    setOnboardingComplete(true);
-    setShowOnboarding(false);
-    // Navigate to AI Interview after onboarding
-    setActiveTab('wizard');
-  };
-
-  const handleOnboardingSkip = () => {
-    setOnboardingComplete(true);
-    setShowOnboarding(false);
-  };
   
   const renderScreen = () => {
     if (activeTab === 'plans' && selectedPlan) {
@@ -68,17 +54,9 @@ const Index = () => {
   }
   
   return (
-    <>
-      <AppLayout>
-        {renderScreen()}
-      </AppLayout>
-      {showOnboarding && (
-        <OnboardingTour 
-          onComplete={handleOnboardingComplete}
-          onSkip={handleOnboardingSkip}
-        />
-      )}
-    </>
+    <AppLayout>
+      {renderScreen()}
+    </AppLayout>
   );
 };
 

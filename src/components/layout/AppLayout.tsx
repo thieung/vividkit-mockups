@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { TitleBar } from './TitleBar';
+import { Sidebar } from './Sidebar';
 import { TabNavigation } from './TabNavigation';
 import { CommandPalette } from '@/components/features/CommandPalette';
 import { NewProjectModal } from '@/components/features/NewProjectModal';
@@ -42,12 +43,16 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <TitleBar />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TabNavigation />
+      <div className="flex-1 flex overflow-hidden">
+        <Sidebar />
         
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TabNavigation />
+          
+          <main className="flex-1 overflow-auto p-6">
+            {children}
+          </main>
+        </div>
       </div>
       
       <CommandPalette />
