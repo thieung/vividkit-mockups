@@ -1,10 +1,19 @@
 import { 
   Sparkles, ChevronRight, Lightbulb, Palette, 
   Rocket, PlayCircle, MessageSquare, ArrowRight,
-  Wrench, Upload, Zap, Target, Clock, TrendingUp
+  Wrench, Upload, Zap, Target, Clock, TrendingUp,
+  FileCode, GitCommit, Eye, Bug, RefreshCw, FolderOpen
 } from 'lucide-react';
 import { useAppStore, TabId } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
+
+// Mock recent activity data
+const getRecentActivity = () => [
+  { id: 1, type: 'file', action: 'Modified', target: 'src/App.tsx', time: '2 phút trước', icon: FileCode },
+  { id: 2, type: 'commit', action: 'Commit', target: 'Fix navigation bug', time: '15 phút trước', icon: GitCommit },
+  { id: 3, type: 'deploy', action: 'Preview', target: 'v0.2.3 deployed', time: '1 giờ trước', icon: Eye },
+  { id: 4, type: 'fix', action: 'Fixed', target: '3 linting errors', time: '2 giờ trước', icon: Bug },
+];
 
 interface SmartAction {
   id: string;
@@ -231,6 +240,91 @@ export function SimpleDashboard() {
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
                   </div>
                 </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions Bar - When has projects */}
+      {hasProjects && (
+        <div className="glass-card p-4">
+          <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            Hành động nhanh
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveTab('chat')}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all text-sm font-medium"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Tiếp tục Chat
+            </button>
+            <button
+              onClick={() => setActiveTab('fix')}
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+            >
+              <Bug className="w-4 h-4" />
+              Chạy Fix
+            </button>
+            <button
+              onClick={() => setActiveTab('save')}
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+            >
+              <Eye className="w-4 h-4" />
+              Preview Deploy
+            </button>
+            <button
+              onClick={() => setActiveTab('files')}
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+            >
+              <FolderOpen className="w-4 h-4" />
+              Xem Files
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Activity Feed - When has projects */}
+      {hasProjects && (
+        <div className="glass-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <RefreshCw className="w-5 h-5 text-primary" />
+              Hoạt động gần đây
+            </h2>
+            <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              Hôm nay
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {getRecentActivity().map((activity) => {
+              const Icon = activity.icon;
+              return (
+                <div 
+                  key={activity.id}
+                  className="flex items-center gap-3 p-3 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-all"
+                >
+                  <div className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center",
+                    activity.type === 'file' && "bg-blue-500/20 text-blue-400",
+                    activity.type === 'commit' && "bg-green-500/20 text-green-400",
+                    activity.type === 'deploy' && "bg-purple-500/20 text-purple-400",
+                    activity.type === 'fix' && "bg-orange-500/20 text-orange-400"
+                  )}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-muted-foreground">{activity.action}</span>
+                      <span className="text-sm font-medium truncate">{activity.target}</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">{activity.time}</span>
+                </div>
               );
             })}
           </div>
