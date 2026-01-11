@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { 
   Sparkles, ChevronRight, Lightbulb, Palette, 
   Rocket, PlayCircle, MessageSquare, ArrowRight,
   Wrench, Upload, Zap, Target, Clock, TrendingUp,
-  FileCode, GitCommit, Eye, Bug, RefreshCw, FolderOpen
+  FileCode, GitCommit, Eye, Bug, RefreshCw, FolderOpen, RotateCcw
 } from 'lucide-react';
 import { useAppStore, TabId } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
-
+import { SplashScreen } from '@/components/features/SplashScreen';
+import { OnboardingTour } from '@/components/features/OnboardingTour';
 // Mock recent activity data
 const getRecentActivity = () => [
   { id: 1, type: 'file', action: 'Modified', target: 'src/App.tsx', time: '2 phút trước', icon: FileCode },
@@ -129,6 +131,8 @@ const getSmartActions = (
 
 export function SimpleDashboard() {
   const { setActiveTab, plans, interviewAnswers, brainstormReports, setSelectedPlan } = useAppStore();
+  const [showTestSplash, setShowTestSplash] = useState(false);
+  const [showTestOnboarding, setShowTestOnboarding] = useState(false);
   
   const activePlans = plans.filter(p => p.status === 'in_progress' || p.status === 'review');
   const hasProjects = activePlans.length > 0;
@@ -139,6 +143,13 @@ export function SimpleDashboard() {
   const primaryAction = smartActions.find(a => a.priority === 'high') || smartActions[0];
   const otherActions = smartActions.filter(a => a !== primaryAction);
 
+  // Test splash + onboarding flow
+  if (showTestSplash) {
+    return <SplashScreen onComplete={() => {
+      setShowTestSplash(false);
+      setShowTestOnboarding(true);
+    }} />;
+  }
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto pb-8">
       {/* Hero Section - Current Focus */}
@@ -402,6 +413,35 @@ export function SimpleDashboard() {
           <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         </div>
       </div>
+
+      {/* Dev: Test Onboarding Flow */}
+      <div className="glass-card p-4 border-dashed border-2 border-orange-500/30 bg-orange-500/5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
+              <RotateCcw className="w-4 h-4 text-orange-400" />
+            </div>
+            <div>
+              <h3 className="font-medium text-sm">🧪 Dev: Test Onboarding</h3>
+              <p className="text-xs text-muted-foreground">Replay Welcome + Tour flow</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowTestSplash(true)}
+            className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg text-sm font-medium transition-all"
+          >
+            Replay Flow
+          </button>
+        </div>
+      </div>
+
+      {/* Onboarding Tour Overlay */}
+      {showTestOnboarding && (
+        <OnboardingTour 
+          onComplete={() => setShowTestOnboarding(false)}
+          onSkip={() => setShowTestOnboarding(false)}
+        />
+      )}
     </div>
   );
 }
