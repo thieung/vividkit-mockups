@@ -104,6 +104,37 @@ export function PlansScreen() {
     return Math.max(20, plan.progress);
   };
 
+  // Generate date columns for timeline header
+  const generateDateColumns = () => {
+    const dates = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + (i * 5)); // Every 5 days
+      const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+      const day = date.getDate();
+      dates.push(`${month} ${day}`);
+    }
+    return dates;
+  };
+
+  // Calculate bar position (0-100%) based on plan index for demo
+  const getBarPosition = (plan: Plan) => {
+    const idx = plans.findIndex(p => p.id === plan.id);
+    // Stagger bars based on status and index
+    if (plan.status === 'done') return 0;
+    if (plan.status === 'in_progress') return 20 + (idx * 5);
+    if (plan.status === 'review') return 40 + (idx * 5);
+    return 60 + (idx * 5); // draft
+  };
+
+  // Calculate bar width based on progress
+  const getBarWidth = (plan: Plan) => {
+    if (plan.status === 'done') return 90;
+    if (plan.status === 'draft') return 15;
+    return Math.max(20, Math.min(50, plan.progress / 2 + 15));
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
@@ -134,114 +165,110 @@ export function PlansScreen() {
       </div>
 
       {/* Gantt Timeline Section */}
-      <div className="flex-shrink-0 border-b border-border">
+      <div className="flex-shrink-0 border-b border-border bg-card/50">
         <button
           onClick={() => setShowGantt(!showGantt)}
-          className="w-full flex items-center justify-between p-3 hover:bg-muted/30 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors border-b border-border/50"
         >
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-primary" />
-            <span className="font-medium text-sm">Timeline View</span>
-            <Badge variant="secondary" className="text-xs px-1.5 py-0">
-              {plans.length} plans
-            </Badge>
+            <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Timeline</span>
           </div>
-          {showGantt ? (
-            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-          ) : (
-            <ChevronRightIcon className="w-4 h-4 text-muted-foreground" />
-          )}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 text-xs">
+              <span className="text-muted-foreground">Avg: <span className="text-foreground font-medium">1d</span></span>
+              <span className="text-muted-foreground">Effort: <span className="text-foreground font-medium">16h</span></span>
+            </div>
+            {showGantt ? (
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <ChevronRightIcon className="w-4 h-4 text-muted-foreground" />
+            )}
+          </div>
         </button>
         
         {showGantt && (
-          <div className="px-4 pb-4">
-            {/* Gantt Header */}
-            <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
-              <div className="w-40 flex-shrink-0">Plan</div>
-              <div className="flex-1 flex items-center justify-between">
-                <span>Progress</span>
-                <div className="flex gap-4">
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-muted-foreground/30"></span> Ideas</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> Building</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Testing</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Complete</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Gantt Rows */}
-            <div className="space-y-2">
-              {plans.slice(0, 6).map((plan) => (
+          <div className="relative">
+            {/* Date Header Row */}
+            <div className="flex border-b border-border/30">
+              {generateDateColumns().map((date, idx) => (
                 <div 
-                  key={plan.id}
-                  onClick={() => handlePlanClick(plan)}
-                  className="flex items-center gap-2 group cursor-pointer"
+                  key={idx}
+                  className="flex-1 px-2 py-2 text-xs text-muted-foreground font-medium border-r border-border/20 last:border-r-0"
                 >
-                  {/* Plan Name */}
-                  <div className="w-40 flex-shrink-0 flex items-center gap-2">
-                    <span className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                      {plan.title.slice(0, 18)}{plan.title.length > 18 ? '...' : ''}
-                    </span>
-                  </div>
-                  
-                  {/* Gantt Bar Container */}
-                  <div className="flex-1 h-6 bg-muted/30 rounded-md relative overflow-hidden">
-                    {/* Main Progress Bar */}
-                    <div 
-                      className={cn(
-                        "absolute left-0 top-0 h-full rounded-md transition-all duration-500",
-                        getStatusColor(plan.status),
-                        "group-hover:brightness-110"
-                      )}
-                      style={{ width: `${getGanttWidth(plan)}%` }}
-                    >
-                      {/* Phase markers inside bar */}
-                      {plan.phases && plan.phases.length > 0 && (
-                        <div className="absolute inset-0 flex items-center">
-                          {plan.phases.map((phase, idx) => (
-                            <div
-                              key={phase.id}
-                              className={cn(
-                                "flex-1 h-full border-r border-white/20 last:border-r-0 flex items-center justify-center",
-                                phase.status === 'done' && "bg-white/20",
-                                phase.status === 'active' && "bg-white/10 animate-pulse"
-                              )}
-                              title={`${phase.name}: ${phase.status}`}
-                            >
-                              {phase.status === 'done' && (
-                                <Check className="w-3 h-3 text-white/80" />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Progress percentage */}
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
-                      {plan.progress}%
-                    </span>
-                  </div>
-                  
-                  {/* Priority Badge */}
-                  <Badge 
-                    variant="outline" 
-                    className={cn("text-xs flex-shrink-0", priorityConfig[plan.priority].color)}
-                  >
-                    {plan.priority}
-                  </Badge>
+                  {date}
                 </div>
               ))}
             </div>
 
-            {/* Show more if needed */}
-            {plans.length > 6 && (
-              <div className="mt-3 text-center">
-                <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">
-                  +{plans.length - 6} more plans
-                </Button>
+            {/* Timeline Grid with Plans */}
+            <div className="relative min-h-[120px]">
+              {/* Vertical Grid Lines */}
+              <div className="absolute inset-0 flex pointer-events-none">
+                {generateDateColumns().map((_, idx) => (
+                  <div 
+                    key={idx}
+                    className="flex-1 border-r border-border/10 last:border-r-0"
+                  />
+                ))}
               </div>
-            )}
+
+              {/* Plan Bars */}
+              <div className="relative py-3 px-2 space-y-2">
+                {plans.slice(0, 4).map((plan, planIdx) => {
+                  const barStart = getBarPosition(plan);
+                  const barWidth = getBarWidth(plan);
+                  
+                  return (
+                    <div 
+                      key={plan.id}
+                      className="relative h-8 group"
+                    >
+                      {/* Plan Bar */}
+                      <div
+                        onClick={() => handlePlanClick(plan)}
+                        className={cn(
+                          "absolute h-full rounded cursor-pointer transition-all duration-300",
+                          "border border-border/50 hover:border-border",
+                          "flex items-center px-2 gap-1.5",
+                          plan.status === 'done' && "bg-emerald-500/20 border-emerald-500/30",
+                          plan.status === 'review' && "bg-blue-500/20 border-blue-500/30",
+                          plan.status === 'in_progress' && "bg-amber-500/20 border-amber-500/30",
+                          plan.status === 'draft' && "bg-muted/50 border-muted-foreground/20"
+                        )}
+                        style={{ 
+                          left: `${barStart}%`, 
+                          width: `${barWidth}%`,
+                          minWidth: '80px'
+                        }}
+                      >
+                        <span className="text-xs font-medium text-foreground truncate">
+                          {plan.title.slice(0, 12)}{plan.title.length > 12 ? '...' : ''}
+                        </span>
+                        {plan.status === 'in_progress' && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Status Legend Footer */}
+            <div className="flex items-center gap-4 px-4 py-2 border-t border-border/30 text-xs">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-muted-foreground">{plans.filter(p => p.status === 'done').length} done</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-muted-foreground">{plans.filter(p => p.status === 'in_progress').length} active</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-muted-foreground/50" />
+                <span className="text-muted-foreground">{plans.filter(p => p.status === 'draft' || p.status === 'review').length} pending</span>
+              </span>
+            </div>
           </div>
         )}
       </div>
