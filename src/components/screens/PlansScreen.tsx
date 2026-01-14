@@ -12,7 +12,10 @@ import {
   Zap,
   ArrowRight,
   MoreHorizontal,
-  Link2
+  Link2,
+  BarChart3,
+  ChevronDown,
+  ChevronRight as ChevronRightIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +48,7 @@ export function PlansScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [draggedPlan, setDraggedPlan] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+  const [showGantt, setShowGantt] = useState(true);
 
   const getPlansForColumn = (status: Plan['status']) => {
     return plans
@@ -82,6 +86,24 @@ export function PlansScreen() {
     return plans.find(p => p.id === depId);
   };
 
+  // Get status color for Gantt bars
+  const getStatusColor = (status: Plan['status']) => {
+    switch (status) {
+      case 'draft': return 'bg-muted-foreground/30';
+      case 'in_progress': return 'bg-amber-500';
+      case 'review': return 'bg-blue-500';
+      case 'done': return 'bg-emerald-500';
+      default: return 'bg-muted';
+    }
+  };
+
+  // Calculate Gantt bar width based on progress
+  const getGanttWidth = (plan: Plan) => {
+    if (plan.status === 'done') return 100;
+    if (plan.status === 'draft') return 15;
+    return Math.max(20, plan.progress);
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
@@ -109,6 +131,119 @@ export function PlansScreen() {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Gantt Timeline Section */}
+      <div className="flex-shrink-0 border-b border-border">
+        <button
+          onClick={() => setShowGantt(!showGantt)}
+          className="w-full flex items-center justify-between p-3 hover:bg-muted/30 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-primary" />
+            <span className="font-medium text-sm">Timeline View</span>
+            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+              {plans.length} plans
+            </Badge>
+          </div>
+          {showGantt ? (
+            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          ) : (
+            <ChevronRightIcon className="w-4 h-4 text-muted-foreground" />
+          )}
+        </button>
+        
+        {showGantt && (
+          <div className="px-4 pb-4">
+            {/* Gantt Header */}
+            <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
+              <div className="w-40 flex-shrink-0">Plan</div>
+              <div className="flex-1 flex items-center justify-between">
+                <span>Progress</span>
+                <div className="flex gap-4">
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-muted-foreground/30"></span> Ideas</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> Building</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Testing</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Complete</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Gantt Rows */}
+            <div className="space-y-2">
+              {plans.slice(0, 6).map((plan) => (
+                <div 
+                  key={plan.id}
+                  onClick={() => handlePlanClick(plan)}
+                  className="flex items-center gap-2 group cursor-pointer"
+                >
+                  {/* Plan Name */}
+                  <div className="w-40 flex-shrink-0 flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                      {plan.title.slice(0, 18)}{plan.title.length > 18 ? '...' : ''}
+                    </span>
+                  </div>
+                  
+                  {/* Gantt Bar Container */}
+                  <div className="flex-1 h-6 bg-muted/30 rounded-md relative overflow-hidden">
+                    {/* Main Progress Bar */}
+                    <div 
+                      className={cn(
+                        "absolute left-0 top-0 h-full rounded-md transition-all duration-500",
+                        getStatusColor(plan.status),
+                        "group-hover:brightness-110"
+                      )}
+                      style={{ width: `${getGanttWidth(plan)}%` }}
+                    >
+                      {/* Phase markers inside bar */}
+                      {plan.phases && plan.phases.length > 0 && (
+                        <div className="absolute inset-0 flex items-center">
+                          {plan.phases.map((phase, idx) => (
+                            <div
+                              key={phase.id}
+                              className={cn(
+                                "flex-1 h-full border-r border-white/20 last:border-r-0 flex items-center justify-center",
+                                phase.status === 'done' && "bg-white/20",
+                                phase.status === 'active' && "bg-white/10 animate-pulse"
+                              )}
+                              title={`${phase.name}: ${phase.status}`}
+                            >
+                              {phase.status === 'done' && (
+                                <Check className="w-3 h-3 text-white/80" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Progress percentage */}
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                      {plan.progress}%
+                    </span>
+                  </div>
+                  
+                  {/* Priority Badge */}
+                  <Badge 
+                    variant="outline" 
+                    className={cn("text-xs flex-shrink-0", priorityConfig[plan.priority].color)}
+                  >
+                    {plan.priority}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+
+            {/* Show more if needed */}
+            {plans.length > 6 && (
+              <div className="mt-3 text-center">
+                <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">
+                  +{plans.length - 6} more plans
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Kanban Board */}
