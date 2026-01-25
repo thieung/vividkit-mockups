@@ -11,7 +11,12 @@ import {
   X,
   ArrowRight,
   ArrowLeft,
-  CheckCircle2
+  CheckCircle2,
+  Terminal,
+  Download,
+  ExternalLink,
+  Copy,
+  Check
 } from 'lucide-react';
 
 interface TourStep {
@@ -20,14 +25,86 @@ interface TourStep {
   description: string;
   icon: React.ReactNode;
   highlight?: string;
+  content?: React.ReactNode;
 }
+
+const InstallStep = ({ 
+  name, 
+  description, 
+  installCmd, 
+  repoUrl 
+}: { 
+  name: string; 
+  description: string; 
+  installCmd: string; 
+  repoUrl: string;
+}) => {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(installCmd);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-muted/50 rounded-lg p-4 border border-border/50">
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold text-foreground">{name}</h4>
+        <a 
+          href={repoUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-xs text-primary hover:underline flex items-center gap-1"
+        >
+          GitHub <ExternalLink className="h-3 w-3" />
+        </a>
+      </div>
+      <p className="text-xs text-muted-foreground mb-3">{description}</p>
+      <div className="flex items-center gap-2 bg-background rounded-md border border-border p-2">
+        <Terminal className="h-4 w-4 text-muted-foreground shrink-0" />
+        <code className="text-xs text-foreground flex-1 font-mono">{installCmd}</code>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-6 w-6 shrink-0"
+          onClick={handleCopy}
+        >
+          {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Chào mừng đến VividKit! 🎉',
-    description: 'VividKit giúp bạn biến ý tưởng thành ứng dụng thực tế với sự hỗ trợ của AI. Hãy cùng khám phá các tính năng chính!',
+    description: 'VividKit giúp bạn biến ý tưởng thành ứng dụng thực tế với sự hỗ trợ của AI. Trước tiên, hãy cài đặt các công cụ cần thiết!',
     icon: <Sparkles className="h-8 w-8" />,
+  },
+  {
+    id: 'install-tools',
+    title: 'Cài đặt công cụ CLI',
+    description: 'Để sử dụng VividKit hiệu quả, bạn cần cài đặt 2 công cụ sau:',
+    icon: <Download className="h-8 w-8" />,
+    content: (
+      <div className="space-y-3 mt-4">
+        <InstallStep 
+          name="Claudekit CLI"
+          description="Công cụ dòng lệnh để tương tác với Claude AI"
+          installCmd="npm install -g claudekit-cli"
+          repoUrl="https://github.com/mrgoonie/claudekit-cli"
+        />
+        <InstallStep 
+          name="CCS (Claude Context System)"
+          description="Hệ thống quản lý context cho Claude"
+          installCmd="npm install -g ccs"
+          repoUrl="https://github.com/kaitranntt/ccs"
+        />
+      </div>
+    ),
   },
   {
     id: 'interview',
@@ -162,13 +239,14 @@ export function OnboardingTour({ onComplete, onSkip }: OnboardingTourProps) {
           </div>
 
           {/* Content */}
-          <div className="text-center space-y-3 mb-6">
-            <h3 className="text-xl font-semibold text-foreground">
+          <div className={`space-y-3 mb-6 ${step.content ? 'text-left' : 'text-center'}`}>
+            <h3 className={`text-xl font-semibold text-foreground ${step.content ? '' : 'text-center'}`}>
               {step.title}
             </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className={`text-muted-foreground text-sm leading-relaxed ${step.content ? '' : 'text-center'}`}>
               {step.description}
             </p>
+            {step.content}
           </div>
 
           {/* Step indicators */}
