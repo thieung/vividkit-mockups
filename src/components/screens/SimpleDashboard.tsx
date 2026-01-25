@@ -9,6 +9,7 @@ import { useAppStore, TabId } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 import { SplashScreen } from '@/components/features/SplashScreen';
 import { OnboardingTour } from '@/components/features/OnboardingTour';
+import { OnboardingCLISetup } from '@/components/features/OnboardingCLISetup';
 // Mock recent activity data
 const getRecentActivity = () => [
   { id: 1, type: 'file', action: 'Modified', target: 'src/App.tsx', time: '2 phút trước', icon: FileCode },
@@ -133,6 +134,7 @@ export function SimpleDashboard() {
   const { setActiveTab, plans, interviewAnswers, brainstormReports, setSelectedPlan } = useAppStore();
   const [showTestSplash, setShowTestSplash] = useState(false);
   const [showTestOnboarding, setShowTestOnboarding] = useState(false);
+  const [showTestCLISetup, setShowTestCLISetup] = useState(false);
   
   const activePlans = plans.filter(p => p.status === 'in_progress' || p.status === 'review');
   const hasProjects = activePlans.length > 0;
@@ -426,12 +428,20 @@ export function SimpleDashboard() {
               <p className="text-xs text-muted-foreground">Replay Welcome + Tour flow</p>
             </div>
           </div>
-          <button
-            onClick={() => setShowTestSplash(true)}
-            className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg text-sm font-medium transition-all"
-          >
-            Replay Flow
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowTestCLISetup(true)}
+              className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg text-sm font-medium transition-all"
+            >
+              CLI Setup
+            </button>
+            <button
+              onClick={() => setShowTestSplash(true)}
+              className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg text-sm font-medium transition-all"
+            >
+              Full Flow
+            </button>
+          </div>
         </div>
       </div>
 
@@ -440,6 +450,14 @@ export function SimpleDashboard() {
         <OnboardingTour 
           onComplete={() => setShowTestOnboarding(false)}
           onSkip={() => setShowTestOnboarding(false)}
+        />
+      )}
+
+      {/* CLI Setup Overlay */}
+      {showTestCLISetup && (
+        <OnboardingCLISetup 
+          onComplete={() => setShowTestCLISetup(false)}
+          onSkip={() => setShowTestCLISetup(false)}
         />
       )}
     </div>
