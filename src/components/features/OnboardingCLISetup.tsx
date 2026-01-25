@@ -175,9 +175,17 @@ export function OnboardingCLISetup({ onComplete, onSkip }: OnboardingCLISetupPro
                 </Button>
               </div>
               
-              <p className="text-xs text-muted-foreground text-center">
-                Mở Terminal và chạy các lệnh trên để cài đặt
-              </p>
+              <div className="text-center space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  Mở Terminal và chạy các lệnh trên để cài đặt
+                </p>
+                <button 
+                  onClick={onComplete}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Đã cài rồi? Bỏ qua bước này →
+                </button>
+              </div>
             </div>
           )}
 
