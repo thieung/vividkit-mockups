@@ -3,13 +3,15 @@ import {
   Sparkles, ChevronRight, Lightbulb, Palette, 
   Rocket, PlayCircle, MessageSquare, ArrowRight,
   Wrench, Upload, Zap, Target, Clock, TrendingUp,
-  FileCode, GitCommit, Eye, Bug, RefreshCw, FolderOpen, RotateCcw
+  FileCode, GitCommit, Eye, Bug, RefreshCw, FolderOpen, RotateCcw,
+  Save, Server
 } from 'lucide-react';
 import { useAppStore, TabId } from '@/stores/appStore';
 import { cn } from '@/lib/utils';
 import { SplashScreen } from '@/components/features/SplashScreen';
 import { OnboardingTour } from '@/components/features/OnboardingTour';
 import { OnboardingCLISetup } from '@/components/features/OnboardingCLISetup';
+import { QuickCookModal } from '@/components/features/QuickCookModal';
 // Mock recent activity data
 const getRecentActivity = () => [
   { id: 1, type: 'file', action: 'Modified', target: 'src/App.tsx', time: '2 phút trước', icon: FileCode },
@@ -135,6 +137,16 @@ export function SimpleDashboard() {
   const [showTestSplash, setShowTestSplash] = useState(false);
   const [showTestOnboarding, setShowTestOnboarding] = useState(false);
   const [showTestCLISetup, setShowTestCLISetup] = useState(false);
+  const [showQuickCookModal, setShowQuickCookModal] = useState(false);
+
+  const handleQuickCook = (feature: string) => {
+    // Generate command: /cook {feature} --auto
+    const command = `/cook ${feature} --auto`;
+    console.log('Quick Cook command:', command);
+    // TODO: Navigate to execution screen or trigger CCS
+    // For now, navigate to chat with the command
+    setActiveTab('chat');
+  };
   
   const activePlans = plans.filter(p => p.status === 'in_progress' || p.status === 'review');
   const hasProjects = activePlans.length > 0;
@@ -259,41 +271,80 @@ export function SimpleDashboard() {
         </div>
       )}
 
-      {/* Quick Actions Bar - When has projects */}
+      {/* Quick Actions Grid - 2x2 Layout */}
       {hasProjects && (
-        <div className="glass-card p-4">
-          <h2 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+        <div className="glass-card p-6">
+          <h2 className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
             <Zap className="w-4 h-4" />
             Hành động nhanh
           </h2>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setActiveTab('chat')}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all text-sm font-medium"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Tiếp tục Chat
-            </button>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Fix & Debug */}
             <button
               onClick={() => setActiveTab('fix')}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+              className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-all text-left group"
             >
-              <Bug className="w-4 h-4" />
-              Chạy Fix
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white">
+                  <Wrench className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-sm">Fix & Debug</h3>
+                  <p className="text-xs text-muted-foreground">Sửa lỗi tự động</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+              </div>
             </button>
+
+            {/* Save Points */}
             <button
               onClick={() => setActiveTab('save')}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+              className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-all text-left group"
             >
-              <Eye className="w-4 h-4" />
-              Preview Deploy
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white">
+                  <Save className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-sm">Save Points</h3>
+                  <p className="text-xs text-muted-foreground">Lưu & Publish</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+              </div>
             </button>
+
+            {/* Dev Server */}
             <button
               onClick={() => setActiveTab('files')}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition-all text-sm"
+              className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-all text-left group"
             >
-              <FolderOpen className="w-4 h-4" />
-              Xem Files
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white">
+                  <Server className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-sm">Dev Server</h3>
+                  <p className="text-xs text-muted-foreground">Quản lý files</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+              </div>
+            </button>
+
+            {/* Quick Cook */}
+            <button
+              onClick={() => setShowQuickCookModal(true)}
+              className="p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 hover:border-yellow-500/40 transition-all text-left group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-sm">Quick Cook</h3>
+                  <p className="text-xs text-muted-foreground">Thêm tính năng nhanh</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+              </div>
             </button>
           </div>
         </div>
@@ -460,6 +511,13 @@ export function SimpleDashboard() {
           onSkip={() => setShowTestCLISetup(false)}
         />
       )}
+
+      {/* Quick Cook Modal */}
+      <QuickCookModal
+        open={showQuickCookModal}
+        onOpenChange={setShowQuickCookModal}
+        onCook={handleQuickCook}
+      />
     </div>
   );
 }
